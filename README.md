@@ -36,6 +36,23 @@ A universal design token bridge system that connects Figma to any project's deve
 
 ## 🚀 Quick Start
 
+### ⚡ Super Quick Start (2 minutes)
+
+If you already have a project with the bridge system:
+
+1. **Start MCP Server** in your project directory:
+   ```bash
+   npm run mcp
+   ```
+
+2. **Open Figma** and run the Tokenflow Bridge plugin
+
+3. **Connect** using `http://localhost:4000`
+
+4. **Start using** - Select layers and send tokens!
+
+---
+
 ### 1. Clone and Setup
 
 ```bash

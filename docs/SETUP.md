@@ -2,6 +2,28 @@
 
 Complete setup instructions for the Tokenflow Bridge system.
 
+## ⚡ Quick Start (5 minutes)
+
+If you want to get up and running quickly:
+
+1. **Start MCP Server** (in your project directory):
+   ```bash
+   npm run mcp
+   # or
+   node mcp-server.js
+   ```
+
+2. **Open Figma** and run the Tokenflow Bridge plugin
+
+3. **Connect Plugin**:
+   - Use URL: `http://localhost:4000`
+   - Click "Test Connection"
+   - Click "Save & Connect"
+
+4. **Start using** - Select layers and send tokens!
+
+---
+
 ## 📋 Prerequisites
 
 - **Node.js**: Version 18 or higher
