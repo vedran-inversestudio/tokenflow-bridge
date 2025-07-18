@@ -1,0 +1,22 @@
+{
+  "raw": {
+    "web-dashboard_primary_color": "#667eea",
+    "web-dashboard_secondary_color": "#764ba2",
+    "web-dashboard_border_radius": "8px",
+    "web-dashboard_spacing": "16px"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "web-dashboard",
+    "projectName": "Web Dashboard",
+    "source": "figma-plugin",
+    "timestamp": "2025-07-18T13:27:50.950Z"
+  },
+  "extractedAt": "2025-07-18T13:27:50.951Z"
+}

@@ -1,0 +1,22 @@
+{
+  "raw": {
+    "design-system-v1_primary_color": "#667eea",
+    "design-system-v1_secondary_color": "#764ba2",
+    "design-system-v1_border_radius": "8px",
+    "design-system-v1_spacing": "16px"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "design-system-v1",
+    "projectName": "Design System v1",
+    "source": "figma-plugin",
+    "timestamp": "2025-07-18T13:27:50.937Z"
+  },
+  "extractedAt": "2025-07-18T13:27:50.943Z"
+}

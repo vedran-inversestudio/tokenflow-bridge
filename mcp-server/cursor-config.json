@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tokenflow-bridge": {
+      "command": "node",
+      "args": ["/Users/vedran/Documents/GitHub/tokenflow-bridge/mcp-server/simple-server.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+} 

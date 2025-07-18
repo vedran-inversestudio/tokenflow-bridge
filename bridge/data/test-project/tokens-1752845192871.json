@@ -1,0 +1,16 @@
+{
+  "raw": {
+    "test": "value"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "test-project"
+  },
+  "extractedAt": "2025-07-18T13:26:32.870Z"
+}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Token Data Viewer</title></head>
+<body>
+<h1>Token Data</h1>
+<pre id="data"></pre>
+<script>
+fetch("tokens.json")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("data").textContent = JSON.stringify(data, null, 2);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "raw": {
+    "mobile-app_primary_color": "#667eea",
+    "mobile-app_secondary_color": "#764ba2",
+    "mobile-app_border_radius": "8px",
+    "mobile-app_spacing": "16px"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "mobile-app",
+    "projectName": "Mobile App Design",
+    "source": "figma-plugin",
+    "timestamp": "2025-07-18T13:27:50.947Z"
+  },
+  "extractedAt": "2025-07-18T13:27:50.949Z"
+}

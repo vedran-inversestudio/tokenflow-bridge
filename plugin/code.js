@@ -539,6 +539,60 @@ if (figma.currentPage.selection.length === 0) {
 figma.ui.onmessage = (msg) => {
   if (msg.type === 'close-plugin') {
     figma.closePlugin();
+  } else if (msg.type === 'send-to-bridge') {
+    // Handle sending data to bridge server
+    try {
+      const bridgeData = {
+        tokens: {
+          tokenStudio: {},
+          variables: {},
+          styles: {},
+          rawData: msg.data
+        },
+        selection: msg.data.map(node => ({
+          name: node.name,
+          type: node.type,
+          id: node.id
+        })),
+        metadata: {
+          extractedAt: new Date().toISOString(),
+          source: 'figma-plugin',
+          version: '1.0.0'
+        }
+      };
+
+      // Extract token data from the selection
+      if (Array.isArray(msg.data)) {
+        msg.data.forEach(node => {
+          if (node.tokens) {
+            Object.entries(node.tokens).forEach(([key, value]) => {
+              if (key.includes('tokenStudio')) {
+                bridgeData.tokens.tokenStudio[`${node.name}_${key}`] = value;
+              } else if (key.includes('variable')) {
+                bridgeData.tokens.variables[`${node.name}_${key}`] = value;
+              } else if (key.includes('style')) {
+                bridgeData.tokens.styles[`${node.name}_${key}`] = value;
+              }
+            });
+          }
+        });
+      }
+
+      // Send to bridge server using Node.js fetch (if available)
+      // Note: This is a workaround since Figma plugins can't make direct HTTP requests
+      figma.ui.postMessage({ 
+        type: 'bridge-data-ready', 
+        data: bridgeData,
+        message: 'Data prepared for bridge server. Please copy and paste this data manually to http://localhost:8080/api/tokens'
+      });
+      
+    } catch (error) {
+      console.error('Error preparing bridge data:', error);
+      figma.ui.postMessage({ 
+        type: 'error', 
+        message: 'Error preparing bridge data: ' + error.message 
+      });
+    }
   } else if (msg.type === 'refresh-selection') {
     // Handle refresh selection request
     try {

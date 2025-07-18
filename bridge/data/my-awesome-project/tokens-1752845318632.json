@@ -1,0 +1,46 @@
+{
+  "raw": {
+    "color.primary": "#667eea",
+    "color.secondary": "#764ba2",
+    "color.success": "#10b981",
+    "color.warning": "#f59e0b",
+    "color.error": "#ef4444",
+    "spacing.xs": "4px",
+    "spacing.sm": "8px",
+    "spacing.md": "16px",
+    "spacing.lg": "24px",
+    "spacing.xl": "32px",
+    "borderRadius.sm": "4px",
+    "borderRadius.md": "8px",
+    "borderRadius.lg": "12px",
+    "borderRadius.full": "9999px",
+    "fontSize.sm": "14px",
+    "fontSize.md": "16px",
+    "fontSize.lg": "18px",
+    "fontSize.xl": "24px",
+    "button.primary.background": "#667eea",
+    "button.primary.text": "#ffffff",
+    "button.secondary.background": "transparent",
+    "button.secondary.text": "#667eea",
+    "card.background": "#ffffff",
+    "card.border": "#e5e7eb",
+    "input.background": "#ffffff",
+    "input.border": "#d1d5db"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "my-awesome-project",
+    "projectName": "My Awesome Project",
+    "source": "figma-plugin",
+    "timestamp": "2025-07-18T13:28:38.608Z",
+    "figmaFile": "Design System v2.0",
+    "designer": "Design Team"
+  },
+  "extractedAt": "2025-07-18T13:28:38.631Z"
+}

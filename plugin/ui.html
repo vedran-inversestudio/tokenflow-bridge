@@ -56,6 +56,207 @@
       gap: 12px;
     }
     
+    .connection-status {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      position: relative;
+      cursor: help;
+      transition: all 0.3s ease;
+    }
+    
+    .connection-status.connected {
+      background: #16a34a;
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+    }
+    
+    .connection-status.disconnected {
+      background: #dc2626;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+    }
+    
+    .connection-status.connecting {
+      background: #d97706;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .connection-status:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 8px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .connection-status:hover::before {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 2px;
+      border: 4px solid transparent;
+      border-bottom-color: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+    }
+    
+    .connection-form {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #2d3748;
+      font-size: 14px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      color: #718096;
+      font-size: 12px;
+    }
+    
+    .connection-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .connect-button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .connect-button.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .connect-button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .connect-button.secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .connect-button.secondary:hover {
+      background: #cbd5e0;
+    }
+    
+    .connect-button:not(.primary):not(.secondary) {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .connect-button:not(.primary):not(.secondary):hover {
+      background: #edf2f7;
+      border-color: #cbd5e0;
+    }
+    
+    .connection-info {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #e9ecef;
+    }
+    
+    .connection-info h4 {
+      margin: 0 0 12px 0;
+      color: #2d3748;
+      font-size: 14px;
+    }
+    
+    .connection-help {
+      background: #f0f9ff;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #bae6fd;
+    }
+    
+    .connection-help h4 {
+      margin: 0 0 12px 0;
+      color: #0369a1;
+      font-size: 14px;
+    }
+    
+    .connection-help ol {
+      margin: 0;
+      padding-left: 20px;
+      color: #0c4a6e;
+    }
+    
+    .connection-help li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+    
+    .connection-help code {
+      background: #e0f2fe;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    
     .tabs {
       display: flex;
       background: rgba(255,255,255,0.1);
@@ -653,12 +854,14 @@
               <div class="dropdown-item" onclick="showTab('tokens')">Token Details</div>
               <div class="dropdown-item" onclick="showTab('structure')">Structure</div>
               <div class="dropdown-item" onclick="showTab('export')">Export</div>
+              <div class="dropdown-item" onclick="showTab('connection')">🔌 Connection</div>
             </div>
           </div>
         </div>
       </div>
       
       <div class="header-actions">
+        <div class="connection-status disconnected" id="connectionStatus" data-tooltip="Disconnected"></div>
         <button class="refresh-button" onclick="refreshSelection()">
           🔄 Reset
         </button>
@@ -725,10 +928,83 @@
                 💾 Download JSON File
               </button>
               <button class="export-button secondary" onclick="sendToAPI()">
-                🌐 Send to Local API (Coming Soon)
+                📋 Prepare for Bridge Server
               </button>
             </div>
             <div id="export-content"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="connection-tab" class="tab-content">
+        <div class="tab-content-scroll">
+          <div>
+            <h3>🔌 Universal Connection Settings</h3>
+            <p style="color: #666; margin-bottom: 20px; font-size: 13px;">
+              Connect this plugin to any project's bridge server for universal token access.
+            </p>
+            
+            <div class="connection-form">
+              <div class="form-group">
+                <label for="bridgeUrl">Bridge Server URL:</label>
+                <input 
+                  type="url" 
+                  id="bridgeUrl" 
+                  placeholder="http://localhost:4000 or https://my-project-bridge.vercel.app"
+                  value="http://localhost:4000"
+                >
+                <small>Enter the URL of your project's bridge server</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="projectId">Project ID (Optional):</label>
+                <input 
+                  type="text" 
+                  id="projectId" 
+                  placeholder="my-project or leave empty for default"
+                >
+                <small>Unique identifier for this project (used for isolation)</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="connectionKey">Connection Key (Optional):</label>
+                <input 
+                  type="password" 
+                  id="connectionKey" 
+                  placeholder="Enter connection key if required"
+                >
+                <small>Security key for authenticated connections</small>
+              </div>
+              
+              <div class="connection-actions">
+                <button class="connect-button" onclick="testConnection()">
+                  🔍 Test Connection
+                </button>
+                <button class="connect-button primary" onclick="saveConnection()">
+                  💾 Save & Connect
+                </button>
+                <button class="connect-button secondary" onclick="disconnect()">
+                  🔌 Disconnect
+                </button>
+              </div>
+            </div>
+            
+            <div class="connection-info">
+              <h4>Connection Status</h4>
+              <div id="connectionDetails">
+                <p style="font-size: 13px;">No active connection</p>
+              </div>
+            </div>
+            
+            <div class="connection-help">
+              <h4>💡 How to Use</h4>
+              <ol>
+                <li><strong>Local Development:</strong> Use <code>http://localhost:4000</code> for local bridge servers</li>
+                <li><strong>Remote Projects:</strong> Deploy bridge server to Vercel/Netlify and use the URL</li>
+                <li><strong>Multiple Projects:</strong> Each project can have its own bridge server</li>
+                <li><strong>Cursor Integration:</strong> Configure MCP server to connect to your bridge URL</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
@@ -2201,8 +2477,100 @@
       URL.revokeObjectURL(url);
     }
     
-    function sendToAPI() {
-      alert('Local API bridge coming soon! This will allow Tokenflow and MCP tools to access the token data.');
+    async function testConnection() {
+      try {
+        console.log('Testing connection to bridge server...');
+        const response = await fetch('http://localhost:8080/test', {
+          method: 'GET',
+          mode: 'cors'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Connection test successful:', data);
+          return true;
+        } else {
+          console.error('Connection test failed:', response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error('Connection test error:', error);
+        return false;
+      }
+    }
+
+    async function sendToAPI() {
+      if (!currentData) {
+        alert('No data to send');
+        return;
+      }
+
+      // Check if connected to bridge server
+      if (!connectionConfig.isConnected) {
+        const useConnected = confirm(
+          '❌ Not connected to bridge server.\n\n' +
+          'Would you like to:\n' +
+          '• Connect to bridge server (recommended)\n' +
+          '• Use manual export (old method)\n\n' +
+          'Click OK to configure connection, Cancel for manual export.'
+        );
+        
+        if (useConnected) {
+          showTab('connection');
+          return;
+        }
+      }
+
+      try {
+        // Show loading state
+        const button = document.querySelector('.export-button.secondary');
+        const originalText = button.textContent;
+        button.textContent = '🔄 Preparing...';
+        button.disabled = true;
+
+        if (connectionConfig.isConnected) {
+          // Use connected bridge server
+          button.textContent = '🌐 Sending to Bridge...';
+          
+          // Prepare token data
+          const tokenData = {
+            tokens: currentData,
+            metadata: {
+              source: 'figma-plugin',
+              timestamp: new Date().toISOString(),
+              selection: `${currentData.length} objects`,
+              projectId: connectionConfig.projectId || 'default'
+            }
+          };
+          
+          // Send to connected bridge
+          await sendToConnectedBridge(tokenData);
+          
+          button.textContent = '✅ Sent to Bridge';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2000);
+          
+        } else {
+          // Fallback to old method
+          parent.postMessage({ 
+            pluginMessage: { 
+              type: 'send-to-bridge',
+              data: currentData
+            }
+          }, '*');
+        }
+
+      } catch (error) {
+        console.error('Error sending data:', error);
+        alert(`❌ Error sending data: ${error.message}`);
+        
+        // Restore button state
+        const button = document.querySelector('.export-button.secondary');
+        button.textContent = '🌐 Send to Bridge Server';
+        button.disabled = false;
+      }
     }
     
     function updateStructureDisplay() {
@@ -2365,6 +2733,236 @@
       parent.postMessage({ pluginMessage: { type: 'refresh-selection' } }, '*');
     }
     
+    // Connection Management Functions
+    let connectionConfig = {
+      bridgeUrl: 'http://localhost:4000',
+      projectId: '',
+      connectionKey: '',
+      isConnected: false,
+      lastConnected: null
+    };
+    
+    // Load connection config from localStorage
+    function loadConnectionConfig() {
+      try {
+        const saved = localStorage.getItem('tokenflow-connection-config');
+        if (saved) {
+          connectionConfig = { ...connectionConfig, ...JSON.parse(saved) };
+          updateConnectionForm();
+          updateConnectionStatus();
+        }
+      } catch (error) {
+        console.error('Error loading connection config:', error);
+      }
+    }
+    
+    // Save connection config to localStorage
+    function saveConnectionConfig() {
+      try {
+        localStorage.setItem('tokenflow-connection-config', JSON.stringify(connectionConfig));
+      } catch (error) {
+        console.error('Error saving connection config:', error);
+      }
+    }
+    
+    // Update connection form with current values
+    function updateConnectionForm() {
+      const bridgeUrlInput = document.getElementById('bridgeUrl');
+      const projectIdInput = document.getElementById('projectId');
+      const connectionKeyInput = document.getElementById('connectionKey');
+      
+      if (bridgeUrlInput) bridgeUrlInput.value = connectionConfig.bridgeUrl;
+      if (projectIdInput) projectIdInput.value = connectionConfig.projectId;
+      if (connectionKeyInput) connectionKeyInput.value = connectionConfig.connectionKey;
+    }
+    
+    // Update connection status display
+    function updateConnectionStatus() {
+      const statusElement = document.getElementById('connectionStatus');
+      const detailsElement = document.getElementById('connectionDetails');
+      
+      if (statusElement) {
+        const statusClass = connectionConfig.isConnected ? 'connected' : 'disconnected';
+        const statusText = connectionConfig.isConnected ? 'Connected' : 'Disconnected';
+        
+        statusElement.className = `connection-status ${statusClass}`;
+        statusElement.setAttribute('data-tooltip', statusText);
+      }
+      
+      if (detailsElement) {
+        if (connectionConfig.isConnected) {
+          detailsElement.innerHTML = `
+            <p style="font-size: 13px;"><strong>Bridge URL:</strong> ${connectionConfig.bridgeUrl}</p>
+            <p style="font-size: 13px;"><strong>Project ID:</strong> ${connectionConfig.projectId || 'Default'}</p>
+            <p style="font-size: 13px;"><strong>Last Connected:</strong> ${connectionConfig.lastConnected || 'Unknown'}</p>
+            <p style="font-size: 13px;"><strong>Status:</strong> <span style="color: #16a34a;">✅ Active</span></p>
+          `;
+        } else {
+          detailsElement.innerHTML = `
+            <p style="font-size: 13px;">No active connection</p>
+            <p style="font-size: 13px;"><strong>Last URL:</strong> ${connectionConfig.bridgeUrl}</p>
+          `;
+        }
+      }
+    }
+    
+    // Test connection to bridge server
+    async function testConnection() {
+      const bridgeUrl = document.getElementById('bridgeUrl').value.trim();
+      const projectId = document.getElementById('projectId').value.trim();
+      const connectionKey = document.getElementById('connectionKey').value.trim();
+      
+      if (!bridgeUrl) {
+        alert('Please enter a bridge server URL');
+        return;
+      }
+      
+      // Update status to connecting
+      const statusElement = document.getElementById('connectionStatus');
+      if (statusElement) {
+        statusElement.className = 'connection-status connecting';
+        statusElement.setAttribute('data-tooltip', 'Testing connection...');
+      }
+      
+      try {
+        // Test health endpoint
+        const healthUrl = `${bridgeUrl}/health`;
+        const response = await fetch(healthUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(connectionKey && { 'Authorization': `Bearer ${connectionKey}` })
+          }
+        });
+        
+        if (response.ok) {
+          const healthData = await response.json();
+          
+          // Test project-specific endpoint if projectId is provided
+          let projectTest = true;
+          if (projectId) {
+            try {
+              const projectUrl = `${bridgeUrl}/api/tokens?project=${projectId}`;
+              const projectResponse = await fetch(projectUrl, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(connectionKey && { 'Authorization': `Bearer ${connectionKey}` })
+                }
+              });
+              projectTest = projectResponse.ok;
+            } catch (error) {
+              console.warn('Project-specific test failed:', error);
+              projectTest = false;
+            }
+          }
+          
+          // Show success
+          alert(`✅ Connection successful!\n\nBridge Server: ${bridgeUrl}\nStatus: ${healthData.status || 'Healthy'}\nProject Support: ${projectTest ? '✅' : '⚠️'}`);
+          
+          // Update connection status
+          connectionConfig.bridgeUrl = bridgeUrl;
+          connectionConfig.projectId = projectId;
+          connectionConfig.connectionKey = connectionKey;
+          connectionConfig.isConnected = true;
+          connectionConfig.lastConnected = new Date().toISOString();
+          
+          saveConnectionConfig();
+          updateConnectionStatus();
+          
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+      } catch (error) {
+        console.error('Connection test failed:', error);
+        alert(`❌ Connection failed!\n\nError: ${error.message}\n\nPlease check:\n• Bridge server is running\n• URL is correct\n• Network connectivity`);
+        
+        // Reset status
+        updateConnectionStatus();
+      }
+    }
+    
+    // Save connection and connect
+    function saveConnection() {
+      const bridgeUrl = document.getElementById('bridgeUrl').value.trim();
+      const projectId = document.getElementById('projectId').value.trim();
+      const connectionKey = document.getElementById('connectionKey').value.trim();
+      
+      if (!bridgeUrl) {
+        alert('Please enter a bridge server URL');
+        return;
+      }
+      
+      // Update config
+      connectionConfig.bridgeUrl = bridgeUrl;
+      connectionConfig.projectId = projectId;
+      connectionConfig.connectionKey = connectionKey;
+      connectionConfig.isConnected = true;
+      connectionConfig.lastConnected = new Date().toISOString();
+      
+      // Save to localStorage
+      saveConnectionConfig();
+      
+      // Update UI
+      updateConnectionStatus();
+      
+      // Test connection
+      testConnection();
+    }
+    
+    // Disconnect from bridge server
+    function disconnect() {
+      connectionConfig.isConnected = false;
+      connectionConfig.lastConnected = null;
+      
+      saveConnectionConfig();
+      updateConnectionStatus();
+      
+      alert('🔌 Disconnected from bridge server');
+    }
+    
+    // Send token data to connected bridge server
+    async function sendToConnectedBridge(tokenData) {
+      if (!connectionConfig.isConnected) {
+        alert('❌ Not connected to bridge server. Please configure connection first.');
+        return;
+      }
+      
+      try {
+        const url = connectionConfig.projectId 
+          ? `${connectionConfig.bridgeUrl}/api/tokens?project=${connectionConfig.projectId}`
+          : `${connectionConfig.bridgeUrl}/api/tokens`;
+        
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(connectionConfig.connectionKey && { 'Authorization': `Bearer ${connectionConfig.connectionKey}` })
+        };
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(tokenData)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          alert(`✅ Tokens sent successfully!\n\nBridge: ${connectionConfig.bridgeUrl}\nProject: ${connectionConfig.projectId || 'Default'}\nTokens: ${result.tokenCount || 'Unknown'}`);
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+      } catch (error) {
+        console.error('Error sending tokens to bridge:', error);
+        alert(`❌ Failed to send tokens!\n\nError: ${error.message}`);
+      }
+    }
+    
+    // Initialize connection management
+    document.addEventListener('DOMContentLoaded', function() {
+      loadConnectionConfig();
+    });
+    
     window.onmessage = (event) => {
       try {
         const { type, data, hasTokenStudioData, message } = event.data.pluginMessage;
@@ -2429,6 +3027,87 @@
           
           // Initialize with overview tab
           updateOverviewDisplay();
+        } else if (type === 'bridge-data-ready') {
+          // Handle bridge data ready response
+          const button = document.querySelector('.export-button.secondary');
+          button.textContent = '🌐 Send to Bridge Server';
+          button.disabled = false;
+          
+                    // Show the data in a more copyable format
+          const jsonData = JSON.stringify(data, null, 2);
+          
+          const instructions = `
+✅ Token data prepared!
+
+📋 Next Steps:
+1. Copy the JSON data below (it's large, so copy carefully)
+2. Open Terminal and navigate to the bridge folder
+3. Run: npm run send-tokens
+4. When prompted, paste the JSON data
+
+💡 Or visit the dashboard at http://localhost:4000
+
+📊 JSON Data (first 1000 chars):
+${jsonData.substring(0, 1000)}...
+          `;
+          
+          // Create a custom dialog with copy functionality
+          const dialog = document.createElement('div');
+          dialog.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          `;
+          
+          dialog.innerHTML = `
+            <h3 style="margin: 0 0 15px 0; color: #667eea;">✅ Token Data Ready!</h3>
+            <p style="margin: 0 0 15px 0;">Copy the JSON data below and use the token sender script:</p>
+            <textarea id="jsonData" style="width: 100%; height: 200px; font-family: monospace; font-size: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: vertical;">${jsonData}</textarea>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+              <button id="copyBtn" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">📋 Copy to Clipboard</button>
+              <button id="closeBtn" style="padding: 8px 16px; background: #ccc; color: #333; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+          `;
+          
+          document.body.appendChild(dialog);
+          
+          // Add event listeners
+          document.getElementById('copyBtn').onclick = () => {
+            const textarea = document.getElementById('jsonData');
+            textarea.select();
+            document.execCommand('copy');
+            alert('JSON data copied to clipboard!');
+          };
+          
+          document.getElementById('closeBtn').onclick = () => {
+            document.body.removeChild(dialog);
+          };
+          
+          // Also try to create a temporary file for download
+          try {
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tokenflow-tokens-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          } catch (e) {
+            console.log('Download failed, but data is available for copying');
+          }
+          
         } else if (type === 'error') {
           // Handle error messages
           const errorMessage = `
