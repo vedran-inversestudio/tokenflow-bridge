@@ -1,0 +1,55 @@
+{
+  "raw": {
+    "tokenStudio": {
+      "Type=Info_tokenStudio_borderRadius": "pillow.border-radius.container.pill",
+      "Type=Info_tokenStudio_height": "pillow.dimension.action.height.1_5x",
+      "Type=Info_tokenStudio_border": "pillow.border.action.transparent",
+      "Type=Info_tokenStudio_horizontalPadding": "pillow.spacing.container.0_75x",
+      "Type=Info_tokenStudio_itemSpacing": "pillow.spacing.container.0_25x",
+      "Type=Info_tokenStudio_fill": "pillow.color.background.info.initial"
+    },
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {
+      "borderRadius": "pillow.border-radius.container.pill",
+      "height": "pillow.dimension.action.height.1_5x",
+      "border": "pillow.border.action.transparent",
+      "horizontalPadding": "pillow.spacing.container.0_75x",
+      "itemSpacing": "pillow.spacing.container.0_25x",
+      "fill": "pillow.color.background.info.initial"
+    }
+  },
+  "filtered": {
+    "tokenStudio": {
+      "Type=Info_tokenStudio_borderRadius": "pillow.border-radius.container.pill",
+      "Type=Info_tokenStudio_height": "pillow.dimension.action.height.1_5x",
+      "Type=Info_tokenStudio_border": "pillow.border.action.transparent",
+      "Type=Info_tokenStudio_horizontalPadding": "pillow.spacing.container.0_75x",
+      "Type=Info_tokenStudio_itemSpacing": "pillow.spacing.container.0_25x",
+      "Type=Info_tokenStudio_fill": "pillow.color.background.info.initial"
+    },
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {
+      "Type=Info_tokenStudio_borderRadius": "pillow.border-radius.container.pill",
+      "Type=Info_tokenStudio_height": "pillow.dimension.action.height.1_5x",
+      "Type=Info_tokenStudio_border": "pillow.border.action.transparent",
+      "Type=Info_tokenStudio_horizontalPadding": "pillow.spacing.container.0_75x",
+      "Type=Info_tokenStudio_itemSpacing": "pillow.spacing.container.0_25x",
+      "Type=Info_tokenStudio_fill": "pillow.color.background.info.initial"
+    }
+  },
+  "selection": [
+    {
+      "name": "Type=Info",
+      "type": "COMPONENT",
+      "id": "102:13725"
+    }
+  ],
+  "metadata": {
+    "extractedAt": "2025-07-18T12:38:58.585Z",
+    "source": "figma-plugin",
+    "version": "1.0.0"
+  },
+  "extractedAt": "2025-07-18T13:09:38.360Z"
+}
