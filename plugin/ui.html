@@ -1,0 +1,2468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+      <title>Tokenflow Bridge</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container { 
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px; 
+      padding: 0; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.2);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      margin: 2px;
+    }
+    
+    .header {
+      padding: 16px 16px 10px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      flex-shrink: 0;
+      border-radius: 20px 20px 0 0;
+      position: relative;
+    }
+    
+    .header h2 {
+      margin: 0 0 16px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .tab-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .tabs {
+      display: flex;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 3px;
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      gap: 2px;
+      position: relative;
+      z-index: 1000;
+    }
+    
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+      border-radius: 6px;
+      margin: 0;
+      font-size: 13px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    
+    .tab:hover {
+      color: white;
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-1px);
+    }
+    
+    .tab.active {
+      background: rgba(255,255,255,0.9);
+      color: #667eea;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .dropdown-tab {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 1500;
+    }
+    
+    .dropdown-arrow {
+      font-size: 10px;
+      transition: transform 0.2s ease;
+    }
+    
+    .dropdown-tab.active .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+    
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin-top: 4px;
+      padding: 4px;
+      display: none;
+      z-index: 2000;
+      min-width: 120px;
+    }
+    
+    .dropdown-tab.active .dropdown-menu {
+      display: block;
+    }
+    
+    .dropdown-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #2d3748;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .dropdown-item:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+    }
+    
+    .header-actions {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .refresh-button {
+      padding: 8px 12px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .refresh-button:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+    
+    .refresh-button {
+      position: relative;
+    }
+    
+    .refresh-button:hover::after {
+      content: "New selection";
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 12px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .refresh-button:hover::before {
+      content: "";
+      position: absolute;
+      top: 100%;
+      right: 12px;
+      margin-top: 0px;
+      border: 6px solid transparent;
+      border-bottom-color: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+    }
+    
+    .content-area {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #fafbfc;
+    }
+    
+    .tab-content {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+      padding: 20px 16px 20px 20px;
+    }
+    
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .tab-content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    
+    .tab-content-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .tab-content-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .tab-content-scroll::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 3px;
+    }
+    
+    .tab-content-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.5);
+    }
+    
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2d3748;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    h3::before {
+      content: '';
+      width: 3px;
+      height: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    pre { 
+      background: #2d3748; 
+      color: #e2e8f0;
+      padding: 20px; 
+      border-radius: 12px; 
+      max-height: 400px; 
+      overflow-y: auto; 
+      border: none;
+      font-size: 13px; 
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .no-selection { 
+      color: #e53e3e; 
+      background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); 
+      padding: 20px; 
+      border-radius: 12px; 
+      border: 1px solid #fc8181; 
+      margin: 16px 0;
+      font-weight: 500;
+    }
+    
+    .token-studio-warning { 
+      background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%); 
+      border: 1px solid #f6ad55; 
+      color: #c05621; 
+      padding: 20px; 
+      border-radius: 12px; 
+      margin-bottom: 20px; 
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    
+    .success { 
+      background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); 
+      border: 1px solid #68d391; 
+      color: #22543d; 
+      padding: 12px 16px; 
+      border-radius: 8px; 
+      margin-bottom: 16px; 
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(104, 211, 145, 0.2);
+    }
+    
+    .button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .lint-issue {
+      background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+      border: 1px solid #fc8181;
+      color: #c53030;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .token-list {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .token-item {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 8px 0;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+      font-size: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .token-item:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .token-name {
+      color: #667eea;
+      font-weight: 700;
+    }
+    
+    .token-type {
+      color: #718096;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    
+    .node-structure {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .node-item {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 8px 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .node-item:hover {
+      border-color: #48bb78;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .node-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .node-name {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 13px;
+    }
+    
+    .node-type {
+      color: #718096;
+      font-size: 11px;
+      background: #edf2f7;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    
+    .token-count {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 1px 4px rgba(72, 187, 120, 0.3);
+    }
+    
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    
+    .stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      color: #718096;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    
+    .raw-data-toggle {
+      background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 600;
+    }
+    
+    .raw-data-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(113, 128, 150, 0.3);
+    }
+    
+    .raw-data {
+      display: none;
+      margin-top: 20px;
+    }
+    
+    .linting-options {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .linting-options h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+    
+    .linting-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .linting-options label:hover {
+      background: #f7fafc;
+    }
+    
+    .linting-options input[type="checkbox"] {
+      margin: 0;
+      width: 18px;
+      height: 18px;
+      accent-color: #667eea;
+    }
+    
+    .export-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .export-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .export-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .export-button.secondary {
+      background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    }
+    
+    .export-button.secondary:hover {
+      box-shadow: 0 8px 20px rgba(113, 128, 150, 0.3);
+    }
+    
+    .token-types-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    
+    .token-type-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .token-type-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .token-type-name {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+    
+    .token-type-count {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>🎨 Tokenflow Bridge</h2>
+      
+      <div class="tab-container">
+        <div class="tabs">
+          <div class="tab active" onclick="showTab('overview')">Overview</div>
+          <div class="tab" onclick="showTab('linting')">Linting</div>
+          <div class="tab dropdown-tab" onclick="toggleDropdown()">
+            More
+            <div class="dropdown-arrow">▼</div>
+            <div class="dropdown-menu" id="more-dropdown">
+              <div class="dropdown-item" onclick="showTab('tokens')">Token Details</div>
+              <div class="dropdown-item" onclick="showTab('structure')">Structure</div>
+              <div class="dropdown-item" onclick="showTab('export')">Export</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="refresh-button" onclick="refreshSelection()">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+    
+    <div class="content-area">
+      <div id="overview-tab" class="tab-content active">
+        <div class="tab-content-scroll">
+          <div id="overview-content"></div>
+        </div>
+      </div>
+      
+      <div id="tokens-tab" class="tab-content">
+        <div class="tab-content-scroll">
+          <div id="tokens-content"></div>
+        </div>
+      </div>
+      
+      <div id="structure-tab" class="tab-content">
+        <div class="tab-content-scroll">
+          <div id="structure-content"></div>
+        </div>
+      </div>
+      
+      <div id="linting-tab" class="tab-content">
+        <div class="tab-content-scroll">
+          <div id="linting-content">
+            <h3>Linting Results</h3>
+            <div class="linting-options">
+              <h4>Linting Options</h4>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label>
+                  <input type="checkbox" id="ignore-focus-states" checked>
+                  <span>Ignore focus state elements (accessibility overlays)</span>
+                </label>
+                <label>
+                  <input type="checkbox" id="ignore-instances" checked>
+                  <span>Ignore instance inheritance issues</span>
+                </label>
+                <label>
+                  <input type="checkbox" id="ignore-auto-sized" checked>
+                  <span>Ignore auto-sized elements</span>
+                </label>
+              </div>
+              <button onclick="performLinting()" style="margin-top: 8px; padding: 6px 12px; font-size: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px;">
+                🔄 Refresh Linting
+              </button>
+            </div>
+            <p>Checking for layers with hardcoded styles but no token assignments...</p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="export-tab" class="tab-content">
+        <div class="tab-content-scroll">
+          <div>
+            <h3>Export Options</h3>
+            <div class="export-options">
+              <button class="export-button" onclick="copyToClipboard()">
+                📋 Copy JSON to Clipboard
+              </button>
+              <button class="export-button" onclick="downloadJSON()">
+                💾 Download JSON File
+              </button>
+              <button class="export-button secondary" onclick="sendToAPI()">
+                🌐 Send to Local API (Coming Soon)
+              </button>
+            </div>
+            <div id="export-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentData = null;
+    let lintingResults = null;
+    
+    function toggleDropdown() {
+      const dropdownTab = document.querySelector('.dropdown-tab');
+      dropdownTab.classList.toggle('active');
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function closeDropdown(e) {
+        if (!dropdownTab.contains(e.target)) {
+          dropdownTab.classList.remove('active');
+          document.removeEventListener('click', closeDropdown);
+        }
+      });
+    }
+    
+    function validateData(data) {
+      try {
+        if (!data) return false;
+        if (!Array.isArray(data)) return false;
+        if (data.length === 0) return true; // Empty array is valid
+        
+        // Check first few items to ensure they have expected structure
+        const sampleSize = Math.min(5, data.length);
+        for (let i = 0; i < sampleSize; i++) {
+          const node = data[i];
+          if (!node || typeof node !== 'object') return false;
+          if (!node.name || !node.type) return false;
+          
+          // Check if children is valid (either undefined/null or array)
+          if (node.children !== undefined && node.children !== null && !Array.isArray(node.children)) {
+            return false;
+          }
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Data validation error:', error);
+        return false;
+      }
+    }
+    
+    function showTab(tabName) {
+      try {
+        console.log('Switching to tab:', tabName);
+        
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        
+        // Show selected tab
+        const targetTab = document.getElementById(tabName + '-tab');
+        if (targetTab) {
+          targetTab.classList.add('active');
+        }
+        
+        // Handle tab highlighting based on navigation structure
+        if (tabName === 'overview' || tabName === 'linting') {
+          // Main navigation tabs
+          const mainTab = document.querySelector(`.tab[onclick="showTab('${tabName}')"]`);
+          if (mainTab) {
+            mainTab.classList.add('active');
+          }
+        } else {
+          // Secondary tabs from dropdown - highlight the "More" tab
+          const moreTab = document.querySelector('.dropdown-tab');
+          if (moreTab) {
+            moreTab.classList.add('active');
+          }
+        }
+        
+        // Close dropdown when a tab is selected
+        const dropdownTab = document.querySelector('.dropdown-tab');
+        if (dropdownTab) {
+          dropdownTab.classList.remove('active');
+        }
+        
+        // Update content based on tab with safety checks
+        if (tabName === 'linting' && currentData && !lintingResults) {
+          console.log('Performing linting...');
+          setTimeout(() => performLinting(), 10);
+        } else if (tabName === 'overview' && currentData) {
+          console.log('Updating overview...');
+          setTimeout(() => updateOverviewDisplay(), 10);
+        } else if (tabName === 'tokens' && currentData) {
+          console.log('Updating tokens...');
+          setTimeout(() => updateTokensDisplay(), 10);
+        } else if (tabName === 'structure' && currentData) {
+          console.log('Updating structure...');
+          setTimeout(() => updateStructureDisplay(), 10);
+        }
+        
+        console.log('Tab switch completed:', tabName);
+      } catch (error) {
+        console.error('Error switching tab:', error);
+        // Show error on the target tab
+        const targetTab = document.getElementById(tabName + '-tab');
+        if (targetTab) {
+          targetTab.innerHTML = `
+            <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+              <strong>Error:</strong> Failed to load tab content: ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+    
+    function extractAllTokens(data) {
+      try {
+        const tokens = [];
+        let nodeCount = 0;
+        const MAX_NODES = 10000; // Safety limit
+        
+        function extractFromNode(node, path = '') {
+          nodeCount++;
+          if (nodeCount > MAX_NODES) {
+            console.warn('Reached maximum node limit, stopping extraction');
+            return;
+          }
+          
+          const currentPath = path ? `${path} > ${cleanNodeName(node.name)}` : cleanNodeName(node.name);
+          
+          if (node.tokens) {
+            Object.entries(node.tokens).forEach(([key, value]) => {
+              if (key.includes('tokenStudio') && typeof value === 'string') {
+                // Filter out problematic data
+                const cleanValue = cleanTokenValue(value, key);
+                if (cleanValue && cleanValue.length > 0) {
+                  tokens.push({
+                    name: cleanValue,
+                    type: key.replace('tokenStudio_', ''),
+                    node: currentPath,
+                    nodeType: node.type
+                  });
+                }
+              }
+            });
+          }
+          
+          if (node.children && Array.isArray(node.children)) {
+            node.children.forEach(child => extractFromNode(child, currentPath));
+          }
+        }
+        
+        if (Array.isArray(data)) {
+          data.forEach(node => extractFromNode(node));
+        }
+        
+        return tokens;
+      } catch (error) {
+        console.error('Error extracting tokens:', error);
+        return [];
+      }
+    }
+    
+    function cleanTokenValue(value, key) {
+      try {
+        // Filter out Token Studio document blobs by key
+        if (key && (
+          key === 'tokenStudioDocumentValues' ||
+          key === 'tokenStudioDocument_themes' ||
+          key === 'tokenStudioDocument_values' ||
+          key === 'tokenStudioDocument' ||
+          key.startsWith('tokenStudioDocument')
+        )) {
+          console.warn('Filtering out Token Studio document blob for key:', key);
+          return '[Filtered Token Studio Document Data]';
+        }
+        if (!value || typeof value !== 'string') return '';
+        
+        // Remove or truncate extremely long values
+        if (value.length > 200) {
+          console.warn('Truncating long token value:', value.substring(0, 50) + '...');
+          return value.substring(0, 200) + '...';
+        }
+        
+        // Filter out values that are mostly non-ASCII (Japanese, emojis, etc.)
+        const asciiRatio = value.split('').filter(char => char.charCodeAt(0) < 128).length / value.length;
+        if (asciiRatio < 0.3) { // Less than 30% ASCII characters
+          console.warn('Filtering out non-ASCII token value:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // Filter out values that are just emojis or symbols
+        const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u;
+        if (emojiRegex.test(value) && value.length < 10) {
+          console.warn('Filtering out emoji-only token value:', value);
+          return '';
+        }
+        
+        // Filter out values that are just numbers or symbols
+        if (/^[\d\s\-_.,]+$/.test(value)) {
+          console.warn('Filtering out numeric/symbol-only token value:', value);
+          return '';
+        }
+        
+        // Enhanced detection of encoded/binary data with more aggressive filtering
+        const specialCharRatio = value.split('').filter(char => {
+          const code = char.charCodeAt(0);
+          // Count characters that are not alphanumeric, spaces, or common punctuation
+          return !((code >= 48 && code <= 57) || // 0-9
+                   (code >= 65 && code <= 90) || // A-Z
+                   (code >= 97 && code <= 122) || // a-z
+                   (code === 32) || // space
+                   (code >= 33 && code <= 47) || // common punctuation
+                   (code >= 58 && code <= 64) ||
+                   (code >= 91 && code <= 96) ||
+                   (code >= 123 && code <= 126));
+        }).length / value.length;
+        
+        // More aggressive threshold for special characters
+        if (specialCharRatio > 0.6) { // More than 60% special characters (lowered from 70%)
+          console.warn('Filtering out encoded/binary token value (high special char ratio):', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // Filter out values that look like base64 or encoded data
+        if (/^[A-Za-z0-9+/=]{20,}$/.test(value)) {
+          console.warn('Filtering out base64-like token value:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // Filter out values with too many consecutive special characters
+        if (/[^\w\s]{8,}/.test(value)) { // Lowered from 10 to 8
+          console.warn('Filtering out token value with too many consecutive special chars:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // Filter out values that are mostly unicode symbols
+        const unicodeSymbolRatio = value.split('').filter(char => {
+          const code = char.charCodeAt(0);
+          return code > 127 && code < 1000; // Unicode symbols in common ranges
+        }).length / value.length;
+        
+        if (unicodeSymbolRatio > 0.4) { // More than 40% unicode symbols (lowered from 50%)
+          console.warn('Filtering out unicode symbol-heavy token value:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // NEW: Filter out values with high density of unusual unicode characters (like the ones you're seeing)
+        const unusualUnicodeRatio = value.split('').filter(char => {
+          const code = char.charCodeAt(0);
+          // Target the specific ranges of characters that appear in your encoded data
+          return (code >= 0x1000 && code <= 0x109F) || // Myanmar
+                 (code >= 0x0E00 && code <= 0x0E7F) || // Thai
+                 (code >= 0x0B80 && code <= 0x0BFF) || // Tamil
+                 (code >= 0x0C00 && code <= 0x0C7F) || // Telugu
+                 (code >= 0x0C80 && code <= 0x0CFF) || // Kannada
+                 (code >= 0x0D00 && code <= 0x0D7F) || // Malayalam
+                 (code >= 0x0D80 && code <= 0x0DFF) || // Sinhala
+                 (code >= 0x0E80 && code <= 0x0EFF) || // Lao
+                 (code >= 0x0F00 && code <= 0x0FFF) || // Tibetan
+                 (code >= 0x10A0 && code <= 0x10FF) || // Georgian
+                 (code >= 0x1100 && code <= 0x11FF) || // Hangul Jamo
+                 (code >= 0x1200 && code <= 0x137F) || // Ethiopic
+                 (code >= 0x13A0 && code <= 0x13FF) || // Cherokee
+                 (code >= 0x1400 && code <= 0x167F) || // Unified Canadian Aboriginal Syllabics
+                 (code >= 0x1680 && code <= 0x169F) || // Ogham
+                 (code >= 0x16A0 && code <= 0x16FF) || // Runic
+                 (code >= 0x1700 && code <= 0x171F) || // Tagalog
+                 (code >= 0x1720 && code <= 0x173F) || // Hanunoo
+                 (code >= 0x1740 && code <= 0x175F) || // Buhid
+                 (code >= 0x1760 && code <= 0x177F) || // Tagbanwa
+                 (code >= 0x1780 && code <= 0x17FF) || // Khmer
+                 (code >= 0x1800 && code <= 0x18AF) || // Mongolian
+                 (code >= 0x1900 && code <= 0x194F) || // Limbu
+                 (code >= 0x1950 && code <= 0x197F) || // Tai Le
+                 (code >= 0x1980 && code <= 0x19DF) || // New Tai Lue
+                 (code >= 0x19E0 && code <= 0x19FF) || // Khmer Symbols
+                 (code >= 0x1A00 && code <= 0x1A1F) || // Buginese
+                 (code >= 0x1A20 && code <= 0x1AAF) || // Tai Tham
+                 (code >= 0x1AB0 && code <= 0x1AFF) || // Combining Diacritical Marks Extended
+                 (code >= 0x1B00 && code <= 0x1B7F) || // Balinese
+                 (code >= 0x1B80 && code <= 0x1BBF) || // Sundanese
+                 (code >= 0x1BC0 && code <= 0x1BFF) || // Batak
+                 (code >= 0x1C00 && code <= 0x1C4F) || // Lepcha
+                 (code >= 0x1C50 && code <= 0x1C7F) || // Ol Chiki
+                 (code >= 0x1C80 && code <= 0x1C8F) || // Cyrillic Extended-C
+                 (code >= 0x1C90 && code <= 0x1CBF) || // Georgian Extended
+                 (code >= 0x1CC0 && code <= 0x1CCF) || // Sundanese Supplement
+                 (code >= 0x1CD0 && code <= 0x1CFF) || // Vedic Extensions
+                 (code >= 0x1D00 && code <= 0x1D7F) || // Phonetic Extensions
+                 (code >= 0x1D80 && code <= 0x1DBF) || // Phonetic Extensions Supplement
+                 (code >= 0x1DC0 && code <= 0x1DFF) || // Combining Diacritical Marks Supplement
+                 (code >= 0x1E00 && code <= 0x1EFF) || // Latin Extended Additional
+                 (code >= 0x1F00 && code <= 0x1FFF) || // Greek Extended
+                 (code >= 0x2000 && code <= 0x206F) || // General Punctuation
+                 (code >= 0x2070 && code <= 0x209F) || // Superscripts and Subscripts
+                 (code >= 0x20A0 && code <= 0x20CF) || // Currency Symbols
+                 (code >= 0x20D0 && code <= 0x20FF) || // Combining Diacritical Marks for Symbols
+                 (code >= 0x2100 && code <= 0x214F) || // Letterlike Symbols
+                 (code >= 0x2150 && code <= 0x218F) || // Number Forms
+                 (code >= 0x2190 && code <= 0x21FF) || // Arrows
+                 (code >= 0x2200 && code <= 0x22FF) || // Mathematical Operators
+                 (code >= 0x2300 && code <= 0x23FF) || // Miscellaneous Technical
+                 (code >= 0x2400 && code <= 0x243F) || // Control Pictures
+                 (code >= 0x2440 && code <= 0x245F) || // Optical Character Recognition
+                 (code >= 0x2460 && code <= 0x24FF) || // Enclosed Alphanumerics
+                 (code >= 0x2500 && code <= 0x257F) || // Box Drawing
+                 (code >= 0x2580 && code <= 0x259F) || // Block Elements
+                 (code >= 0x25A0 && code <= 0x25FF) || // Geometric Shapes
+                 (code >= 0x2600 && code <= 0x26FF) || // Miscellaneous Symbols
+                 (code >= 0x2700 && code <= 0x27BF) || // Dingbats
+                 (code >= 0x27C0 && code <= 0x27EF) || // Miscellaneous Mathematical Symbols-A
+                 (code >= 0x27F0 && code <= 0x27FF) || // Supplemental Arrows-A
+                 (code >= 0x2800 && code <= 0x28FF) || // Braille Patterns
+                 (code >= 0x2900 && code <= 0x297F) || // Supplemental Arrows-B
+                 (code >= 0x2980 && code <= 0x29FF) || // Miscellaneous Mathematical Symbols-B
+                 (code >= 0x2A00 && code <= 0x2AFF) || // Supplemental Mathematical Operators
+                 (code >= 0x2B00 && code <= 0x2BFF) || // Miscellaneous Symbols and Arrows
+                 (code >= 0x2C00 && code <= 0x2C5F) || // Glagolitic
+                 (code >= 0x2C60 && code <= 0x2C7F) || // Latin Extended-C
+                 (code >= 0x2C80 && code <= 0x2CFF) || // Coptic
+                 (code >= 0x2D00 && code <= 0x2D2F) || // Georgian Supplement
+                 (code >= 0x2D30 && code <= 0x2D7F) || // Tifinagh
+                 (code >= 0x2D80 && code <= 0x2DDF) || // Ethiopic Extended
+                 (code >= 0x2DE0 && code <= 0x2DFF) || // Cyrillic Extended-A
+                 (code >= 0x2E00 && code <= 0x2E7F) || // Supplemental Punctuation
+                 (code >= 0x2E80 && code <= 0x2EFF) || // CJK Radicals Supplement
+                 (code >= 0x2F00 && code <= 0x2FDF) || // Kangxi Radicals
+                 (code >= 0x2FF0 && code <= 0x2FFF) || // Ideographic Description Characters
+                 (code >= 0x3000 && code <= 0x303F) || // CJK Symbols and Punctuation
+                 (code >= 0x3040 && code <= 0x309F) || // Hiragana
+                 (code >= 0x30A0 && code <= 0x30FF) || // Katakana
+                 (code >= 0x3100 && code <= 0x312F) || // Bopomofo
+                 (code >= 0x3130 && code <= 0x318F) || // Hangul Compatibility Jamo
+                 (code >= 0x3190 && code <= 0x319F) || // Kanbun
+                 (code >= 0x31A0 && code <= 0x31BF) || // Bopomofo Extended
+                 (code >= 0x31C0 && code <= 0x31EF) || // CJK Strokes
+                 (code >= 0x31F0 && code <= 0x31FF) || // Katakana Phonetic Extensions
+                 (code >= 0x3200 && code <= 0x32FF) || // Enclosed CJK Letters and Months
+                 (code >= 0x3300 && code <= 0x33FF) || // CJK Compatibility
+                 (code >= 0x3400 && code <= 0x4DBF) || // CJK Unified Ideographs Extension A
+                 (code >= 0x4DC0 && code <= 0x4DFF) || // Yijing Hexagram Symbols
+                 (code >= 0x4E00 && code <= 0x9FFF) || // CJK Unified Ideographs
+                 (code >= 0xA000 && code <= 0xA48F) || // Yi Syllables
+                 (code >= 0xA490 && code <= 0xA4CF) || // Yi Radicals
+                 (code >= 0xA4D0 && code <= 0xA4FF) || // Lisu
+                 (code >= 0xA500 && code <= 0xA63F) || // Vai
+                 (code >= 0xA640 && code <= 0xA69F) || // Cyrillic Extended-B
+                 (code >= 0xA6A0 && code <= 0xA6FF) || // Bamum
+                 (code >= 0xA700 && code <= 0xA71F) || // Modifier Tone Letters
+                 (code >= 0xA720 && code <= 0xA7FF) || // Latin Extended-D
+                 (code >= 0xA800 && code <= 0xA82F) || // Syloti Nagri
+                 (code >= 0xA830 && code <= 0xA83F) || // Common Indic Number Forms
+                 (code >= 0xA840 && code <= 0xA87F) || // Phags-pa
+                 (code >= 0xA880 && code <= 0xA8DF) || // Saurashtra
+                 (code >= 0xA8E0 && code <= 0xA8FF) || // Devanagari Extended
+                 (code >= 0xA900 && code <= 0xA92F) || // Kayah Li
+                 (code >= 0xA930 && code <= 0xA95F) || // Rejang
+                 (code >= 0xA960 && code <= 0xA97F) || // Hangul Jamo Extended-A
+                 (code >= 0xA980 && code <= 0xA9DF) || // Javanese
+                 (code >= 0xA9E0 && code <= 0xA9FF) || // Myanmar Extended-B
+                 (code >= 0xAA00 && code <= 0xAA5F) || // Cham
+                 (code >= 0xAA60 && code <= 0xAA7F) || // Myanmar Extended-A
+                 (code >= 0xAA80 && code <= 0xAADF) || // Tai Viet
+                 (code >= 0xAAE0 && code <= 0xAAFF) || // Meetei Mayek Extensions
+                 (code >= 0xAB00 && code <= 0xAB2F) || // Ethiopic Extended-A
+                 (code >= 0xAB30 && code <= 0xAB6F) || // Latin Extended-E
+                 (code >= 0xAB70 && code <= 0xABBF) || // Cherokee Supplement
+                 (code >= 0xABC0 && code <= 0xABFF) || // Meetei Mayek
+                 (code >= 0xAC00 && code <= 0xD7AF) || // Hangul Syllables
+                 (code >= 0xD7B0 && code <= 0xD7FF) || // Hangul Jamo Extended-B
+                 (code >= 0xD800 && code <= 0xDB7F) || // High Surrogates
+                 (code >= 0xDB80 && code <= 0xDBFF) || // High Private Use Surrogates
+                 (code >= 0xDC00 && code <= 0xDFFF) || // Low Surrogates
+                 (code >= 0xE000 && code <= 0xF8FF) || // Private Use Area
+                 (code >= 0xF900 && code <= 0xFAFF) || // CJK Compatibility Ideographs
+                 (code >= 0xFB00 && code <= 0xFB4F) || // Alphabetic Presentation Forms
+                 (code >= 0xFB50 && code <= 0xFDFF) || // Arabic Presentation Forms-A
+                 (code >= 0xFE00 && code <= 0xFE0F) || // Variation Selectors
+                 (code >= 0xFE10 && code <= 0xFE1F) || // Vertical Forms
+                 (code >= 0xFE20 && code <= 0xFE2F) || // Combining Half Marks
+                 (code >= 0xFE30 && code <= 0xFE4F) || // CJK Compatibility Forms
+                 (code >= 0xFE50 && code <= 0xFE6F) || // Small Form Variants
+                 (code >= 0xFE70 && code <= 0xFEFF) || // Arabic Presentation Forms-B
+                 (code >= 0xFF00 && code <= 0xFFEF) || // Halfwidth and Fullwidth Forms
+                 (code >= 0xFFF0 && code <= 0xFFFF);   // Specials
+        }).length / value.length;
+        
+        if (unusualUnicodeRatio > 0.3) { // More than 30% unusual unicode characters
+          console.warn('Filtering out token value with high unusual unicode ratio:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // NEW: Filter out values that contain specific patterns from Token Studio's encoded data
+        if (value.includes('tokenStudioDocument') || 
+            value.includes('tokenStudioDocument_themes') || 
+            value.includes('tokenStudioDocument_values') ||
+            value.includes('tokenStudioDocumentValues')) {
+          console.warn('Filtering out Token Studio internal document data:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        // NEW: Filter out values that are just repeated patterns of unusual characters
+        const uniqueChars = new Set(value.split(''));
+        const uniqueRatio = uniqueChars.size / value.length;
+        if (uniqueRatio < 0.1 && value.length > 20) { // Very low character diversity
+          console.warn('Filtering out token value with low character diversity:', value.substring(0, 50) + '...');
+          return '';
+        }
+        
+        return value.trim();
+      } catch (error) {
+        console.error('Error cleaning token value:', error);
+        return '';
+      }
+    }
+    
+    function cleanNodeName(name) {
+      try {
+        if (!name || typeof name !== 'string') return '';
+        
+        // Filter out names that contain encoded/binary data patterns
+        if (name.includes('tokenStudioDocument') || 
+            name.includes('tokenStudioDocument_themes') || 
+            name.includes('tokenStudioDocument_values') ||
+            name.includes('tokenStudioDocumentValues')) {
+          console.warn('Filtering out node name with Token Studio internal data:', name.substring(0, 50) + '...');
+          return '[Filtered Token Studio Data]';
+        }
+        
+        // Filter out names with high density of unusual unicode characters
+        const unusualUnicodeRatio = name.split('').filter(char => {
+          const code = char.charCodeAt(0);
+          // Target the specific ranges of characters that appear in your encoded data
+          return (code >= 0x1000 && code <= 0x109F) || // Myanmar
+                 (code >= 0x0E00 && code <= 0x0E7F) || // Thai
+                 (code >= 0x0B80 && code <= 0x0BFF) || // Tamil
+                 (code >= 0x0C00 && code <= 0x0C7F) || // Telugu
+                 (code >= 0x0C80 && code <= 0x0CFF) || // Kannada
+                 (code >= 0x0D00 && code <= 0x0D7F) || // Malayalam
+                 (code >= 0x0D80 && code <= 0x0DFF) || // Sinhala
+                 (code >= 0x0E80 && code <= 0x0EFF) || // Lao
+                 (code >= 0x0F00 && code <= 0x0FFF) || // Tibetan
+                 (code >= 0x10A0 && code <= 0x10FF) || // Georgian
+                 (code >= 0x1100 && code <= 0x11FF) || // Hangul Jamo
+                 (code >= 0x1200 && code <= 0x137F) || // Ethiopic
+                 (code >= 0x13A0 && code <= 0x13FF) || // Cherokee
+                 (code >= 0x1400 && code <= 0x167F) || // Unified Canadian Aboriginal Syllabics
+                 (code >= 0x1680 && code <= 0x169F) || // Ogham
+                 (code >= 0x16A0 && code <= 0x16FF) || // Runic
+                 (code >= 0x1700 && code <= 0x171F) || // Tagalog
+                 (code >= 0x1720 && code <= 0x173F) || // Hanunoo
+                 (code >= 0x1740 && code <= 0x175F) || // Buhid
+                 (code >= 0x1760 && code <= 0x177F) || // Tagbanwa
+                 (code >= 0x1780 && code <= 0x17FF) || // Khmer
+                 (code >= 0x1800 && code <= 0x18AF) || // Mongolian
+                 (code >= 0x1900 && code <= 0x194F) || // Limbu
+                 (code >= 0x1950 && code <= 0x197F) || // Tai Le
+                 (code >= 0x1980 && code <= 0x19DF) || // New Tai Lue
+                 (code >= 0x19E0 && code <= 0x19FF) || // Khmer Symbols
+                 (code >= 0x1A00 && code <= 0x1A1F) || // Buginese
+                 (code >= 0x1A20 && code <= 0x1AAF) || // Tai Tham
+                 (code >= 0x1AB0 && code <= 0x1AFF) || // Combining Diacritical Marks Extended
+                 (code >= 0x1B00 && code <= 0x1B7F) || // Balinese
+                 (code >= 0x1B80 && code <= 0x1BBF) || // Sundanese
+                 (code >= 0x1BC0 && code <= 0x1BFF) || // Batak
+                 (code >= 0x1C00 && code <= 0x1C4F) || // Lepcha
+                 (code >= 0x1C50 && code <= 0x1C7F) || // Ol Chiki
+                 (code >= 0x1C80 && code <= 0x1C8F) || // Cyrillic Extended-C
+                 (code >= 0x1C90 && code <= 0x1CBF) || // Georgian Extended
+                 (code >= 0x1CC0 && code <= 0x1CCF) || // Sundanese Supplement
+                 (code >= 0x1CD0 && code <= 0x1CFF) || // Vedic Extensions
+                 (code >= 0x1D00 && code <= 0x1D7F) || // Phonetic Extensions
+                 (code >= 0x1D80 && code <= 0x1DBF) || // Phonetic Extensions Supplement
+                 (code >= 0x1DC0 && code <= 0x1DFF) || // Combining Diacritical Marks Supplement
+                 (code >= 0x1E00 && code <= 0x1EFF) || // Latin Extended Additional
+                 (code >= 0x1F00 && code <= 0x1FFF) || // Greek Extended
+                 (code >= 0x2000 && code <= 0x206F) || // General Punctuation
+                 (code >= 0x2070 && code <= 0x209F) || // Superscripts and Subscripts
+                 (code >= 0x20A0 && code <= 0x20CF) || // Currency Symbols
+                 (code >= 0x20D0 && code <= 0x20FF) || // Combining Diacritical Marks for Symbols
+                 (code >= 0x2100 && code <= 0x214F) || // Letterlike Symbols
+                 (code >= 0x2150 && code <= 0x218F) || // Number Forms
+                 (code >= 0x2190 && code <= 0x21FF) || // Arrows
+                 (code >= 0x2200 && code <= 0x22FF) || // Mathematical Operators
+                 (code >= 0x2300 && code <= 0x23FF) || // Miscellaneous Technical
+                 (code >= 0x2400 && code <= 0x243F) || // Control Pictures
+                 (code >= 0x2440 && code <= 0x245F) || // Optical Character Recognition
+                 (code >= 0x2460 && code <= 0x24FF) || // Enclosed Alphanumerics
+                 (code >= 0x2500 && code <= 0x257F) || // Box Drawing
+                 (code >= 0x2580 && code <= 0x259F) || // Block Elements
+                 (code >= 0x25A0 && code <= 0x25FF) || // Geometric Shapes
+                 (code >= 0x2600 && code <= 0x26FF) || // Miscellaneous Symbols
+                 (code >= 0x2700 && code <= 0x27BF) || // Dingbats
+                 (code >= 0x27C0 && code <= 0x27EF) || // Miscellaneous Mathematical Symbols-A
+                 (code >= 0x27F0 && code <= 0x27FF) || // Supplemental Arrows-A
+                 (code >= 0x2800 && code <= 0x28FF) || // Braille Patterns
+                 (code >= 0x2900 && code <= 0x297F) || // Supplemental Arrows-B
+                 (code >= 0x2980 && code <= 0x29FF) || // Miscellaneous Mathematical Symbols-B
+                 (code >= 0x2A00 && code <= 0x2AFF) || // Supplemental Mathematical Operators
+                 (code >= 0x2B00 && code <= 0x2BFF) || // Miscellaneous Symbols and Arrows
+                 (code >= 0x2C00 && code <= 0x2C5F) || // Glagolitic
+                 (code >= 0x2C60 && code <= 0x2C7F) || // Latin Extended-C
+                 (code >= 0x2C80 && code <= 0x2CFF) || // Coptic
+                 (code >= 0x2D00 && code <= 0x2D2F) || // Georgian Supplement
+                 (code >= 0x2D30 && code <= 0x2D7F) || // Tifinagh
+                 (code >= 0x2D80 && code <= 0x2DDF) || // Ethiopic Extended
+                 (code >= 0x2DE0 && code <= 0x2DFF) || // Cyrillic Extended-A
+                 (code >= 0x2E00 && code <= 0x2E7F) || // Supplemental Punctuation
+                 (code >= 0x2E80 && code <= 0x2EFF) || // CJK Radicals Supplement
+                 (code >= 0x2F00 && code <= 0x2FDF) || // Kangxi Radicals
+                 (code >= 0x2FF0 && code <= 0x2FFF) || // Ideographic Description Characters
+                 (code >= 0x3000 && code <= 0x303F) || // CJK Symbols and Punctuation
+                 (code >= 0x3040 && code <= 0x309F) || // Hiragana
+                 (code >= 0x30A0 && code <= 0x30FF) || // Katakana
+                 (code >= 0x3100 && code <= 0x312F) || // Bopomofo
+                 (code >= 0x3130 && code <= 0x318F) || // Hangul Compatibility Jamo
+                 (code >= 0x3190 && code <= 0x319F) || // Kanbun
+                 (code >= 0x31A0 && code <= 0x31BF) || // Bopomofo Extended
+                 (code >= 0x31C0 && code <= 0x31EF) || // CJK Strokes
+                 (code >= 0x31F0 && code <= 0x31FF) || // Katakana Phonetic Extensions
+                 (code >= 0x3200 && code <= 0x32FF) || // Enclosed CJK Letters and Months
+                 (code >= 0x3300 && code <= 0x33FF) || // CJK Compatibility
+                 (code >= 0x3400 && code <= 0x4DBF) || // CJK Unified Ideographs Extension A
+                 (code >= 0x4DC0 && code <= 0x4DFF) || // Yijing Hexagram Symbols
+                 (code >= 0x4E00 && code <= 0x9FFF) || // CJK Unified Ideographs
+                 (code >= 0xA000 && code <= 0xA48F) || // Yi Syllables
+                 (code >= 0xA490 && code <= 0xA4CF) || // Yi Radicals
+                 (code >= 0xA4D0 && code <= 0xA4FF) || // Lisu
+                 (code >= 0xA500 && code <= 0xA63F) || // Vai
+                 (code >= 0xA640 && code <= 0xA69F) || // Cyrillic Extended-B
+                 (code >= 0xA6A0 && code <= 0xA6FF) || // Bamum
+                 (code >= 0xA700 && code <= 0xA71F) || // Modifier Tone Letters
+                 (code >= 0xA720 && code <= 0xA7FF) || // Latin Extended-D
+                 (code >= 0xA800 && code <= 0xA82F) || // Syloti Nagri
+                 (code >= 0xA830 && code <= 0xA83F) || // Common Indic Number Forms
+                 (code >= 0xA840 && code <= 0xA87F) || // Phags-pa
+                 (code >= 0xA880 && code <= 0xA8DF) || // Saurashtra
+                 (code >= 0xA8E0 && code <= 0xA8FF) || // Devanagari Extended
+                 (code >= 0xA900 && code <= 0xA92F) || // Kayah Li
+                 (code >= 0xA930 && code <= 0xA95F) || // Rejang
+                 (code >= 0xA960 && code <= 0xA97F) || // Hangul Jamo Extended-A
+                 (code >= 0xA980 && code <= 0xA9DF) || // Javanese
+                 (code >= 0xA9E0 && code <= 0xA9FF) || // Myanmar Extended-B
+                 (code >= 0xAA00 && code <= 0xAA5F) || // Cham
+                 (code >= 0xAA60 && code <= 0xAA7F) || // Myanmar Extended-A
+                 (code >= 0xAA80 && code <= 0xAADF) || // Tai Viet
+                 (code >= 0xAAE0 && code <= 0xAAFF) || // Meetei Mayek Extensions
+                 (code >= 0xAB00 && code <= 0xAB2F) || // Ethiopic Extended-A
+                 (code >= 0xAB30 && code <= 0xAB6F) || // Latin Extended-E
+                 (code >= 0xAB70 && code <= 0xABBF) || // Cherokee Supplement
+                 (code >= 0xABC0 && code <= 0xABFF) || // Meetei Mayek
+                 (code >= 0xAC00 && code <= 0xD7AF) || // Hangul Syllables
+                 (code >= 0xD7B0 && code <= 0xD7FF) || // Hangul Jamo Extended-B
+                 (code >= 0xD800 && code <= 0xDB7F) || // High Surrogates
+                 (code >= 0xDB80 && code <= 0xDBFF) || // High Private Use Surrogates
+                 (code >= 0xDC00 && code <= 0xDFFF) || // Low Surrogates
+                 (code >= 0xE000 && code <= 0xF8FF) || // Private Use Area
+                 (code >= 0xF900 && code <= 0xFAFF) || // CJK Compatibility Ideographs
+                 (code >= 0xFB00 && code <= 0xFB4F) || // Alphabetic Presentation Forms
+                 (code >= 0xFB50 && code <= 0xFDFF) || // Arabic Presentation Forms-A
+                 (code >= 0xFE00 && code <= 0xFE0F) || // Variation Selectors
+                 (code >= 0xFE10 && code <= 0xFE1F) || // Vertical Forms
+                 (code >= 0xFE20 && code <= 0xFE2F) || // Combining Half Marks
+                 (code >= 0xFE30 && code <= 0xFE4F) || // CJK Compatibility Forms
+                 (code >= 0xFE50 && code <= 0xFE6F) || // Small Form Variants
+                 (code >= 0xFE70 && code <= 0xFEFF) || // Arabic Presentation Forms-B
+                 (code >= 0xFF00 && code <= 0xFFEF) || // Halfwidth and Fullwidth Forms
+                 (code >= 0xFFF0 && code <= 0xFFFF);   // Specials
+        }).length / name.length;
+        
+        if (unusualUnicodeRatio > 0.2) { // More than 20% unusual unicode characters
+          console.warn('Filtering out node name with high unusual unicode ratio:', name.substring(0, 50) + '...');
+          return '[Filtered Unicode Data]';
+        }
+        
+        // Filter out names with too many consecutive special characters
+        if (/[^\w\s]{6,}/.test(name)) { // 6 or more consecutive special chars
+          console.warn('Filtering out node name with too many consecutive special chars:', name.substring(0, 50) + '...');
+          return '[Filtered Special Chars]';
+        }
+        
+        // Filter out names that are just repeated patterns of unusual characters
+        const uniqueChars = new Set(name.split(''));
+        const uniqueRatio = uniqueChars.size / name.length;
+        if (uniqueRatio < 0.15 && name.length > 15) { // Very low character diversity
+          console.warn('Filtering out node name with low character diversity:', name.substring(0, 50) + '...');
+          return '[Filtered Repeated Pattern]';
+        }
+        
+        return name.trim();
+      } catch (error) {
+        console.error('Error cleaning node name:', error);
+        return '[Error]';
+      }
+    }
+    
+    function updateOverviewDisplay() {
+      try {
+        const content = document.getElementById('overview-content');
+        if (!currentData) return;
+        
+        // Add safety check for data size
+        if (currentData.length > 1000) {
+          content.innerHTML = `
+            <div style="padding: 16px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; color: #856404; margin: 16px 0;">
+              <strong>Large Selection:</strong> The selected data is very large (${currentData.length} root nodes). 
+              Processing may take a moment...
+            </div>
+          `;
+          // Use setTimeout to prevent blocking
+          setTimeout(() => {
+            try {
+              updateOverviewDisplayInternal();
+            } catch (error) {
+              console.error('Error in delayed overview update:', error);
+              content.innerHTML = `
+                <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+                  <strong>Error:</strong> Failed to process large selection: ${error.message}
+                </div>
+              `;
+            }
+          }, 100);
+          return;
+        }
+        
+        updateOverviewDisplayInternal();
+        
+      } catch (error) {
+        console.error('Error updating overview display:', error);
+        const content = document.getElementById('overview-content');
+        if (content) {
+          content.innerHTML = `
+            <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+              <strong>Error:</strong> Failed to update overview: ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+    
+    function updateOverviewDisplayInternal() {
+      const content = document.getElementById('overview-content');
+      if (!currentData) return;
+      
+      const allTokens = extractAllTokens(currentData);
+      const totalNodes = countNodes(currentData);
+      const nodesWithTokens = countNodesWithTokens(currentData);
+      
+      let html = '';
+      
+      // Show status message
+      if (allTokens.length > 0) {
+        html += `<div class="success">✅ Found ${allTokens.length} Token Studio token assignments!</div>`;
+      } else {
+        html += `<div class="token-studio-warning">
+          <strong>No Token Studio data found.</strong><br>
+          <strong>Try this:</strong><br>
+          1. Run the Token Studio plugin first<br>
+          2. Make sure tokens are assigned to your selected elements<br>
+          3. Then run this plugin again<br>
+          <br>
+          <em>Note: Token Studio data is only accessible when the Token Studio plugin is running due to plugin isolation.</em>
+        </div>`;
+      }
+      
+      // Summary stats
+      html += `
+        <div class="summary-stats">
+          <div class="stat-card">
+            <div class="stat-number">${totalNodes}</div>
+            <div class="stat-label">Total Nodes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${nodesWithTokens}</div>
+            <div class="stat-label">Nodes with Tokens</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${allTokens.length}</div>
+            <div class="stat-label">Token Assignments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${totalNodes > 0 ? Math.round((nodesWithTokens / totalNodes) * 100) : 0}%</div>
+            <div class="stat-label">Token Coverage</div>
+          </div>
+        </div>
+      `;
+      
+      // Top tokens
+      if (allTokens.length > 0) {
+        const tokenTypes = {};
+        allTokens.forEach(token => {
+          tokenTypes[token.type] = (tokenTypes[token.type] || 0) + 1;
+        });
+        
+        html += `
+          <div class="token-list">
+            <h4>Token Types Found</h4>
+            ${Object.entries(tokenTypes).map(([type, count]) => 
+              `<div class="token-item">
+                <span class="token-type">${type}</span>
+                <span class="token-count">${count}</span>
+              </div>`
+            ).join('')}
+          </div>
+        `;
+      }
+      
+      content.innerHTML = html;
+    }
+    
+    function updateTokensDisplay() {
+      try {
+        const content = document.getElementById('tokens-content');
+        if (!currentData) return;
+        
+        // Add safety check for data size
+        if (currentData.length > 1000) {
+          content.innerHTML = `
+            <div style="padding: 16px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; color: #856404; margin: 16px 0;">
+              <strong>Large Selection:</strong> The selected data is very large (${currentData.length} root nodes). 
+              Processing may take a moment...
+            </div>
+          `;
+          setTimeout(() => {
+            try {
+              updateTokensDisplayInternal();
+            } catch (error) {
+              console.error('Error in delayed tokens update:', error);
+              content.innerHTML = `
+                <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+                  <strong>Error:</strong> Failed to process large selection: ${error.message}
+                </div>
+              `;
+            }
+          }, 100);
+          return;
+        }
+        
+        updateTokensDisplayInternal();
+        
+      } catch (error) {
+        console.error('Error updating tokens display:', error);
+        const content = document.getElementById('tokens-content');
+        if (content) {
+          content.innerHTML = `
+            <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+              <strong>Error:</strong> Failed to update tokens: ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+    
+    function updateTokensDisplayInternal() {
+      const content = document.getElementById('tokens-content');
+      if (!currentData) return;
+      
+      const allTokens = extractAllTokens(currentData);
+      
+      if (allTokens.length === 0) {
+        content.innerHTML = `
+          <div class="token-studio-warning">
+            <h3>Token Assignments</h3>
+            <p>No meaningful Token Studio tokens found.</p>
+            <p><em>Note: Some token data may have been filtered out if it contained non-ASCII characters, emojis, or was too long.</em></p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = `<h3>Token Assignments (${allTokens.length})</h3>`;
+      
+      // Add info about filtering
+      html += `
+        <div style="margin-bottom: 16px; padding: 8px 12px; background: #e7f3ff; border-radius: 4px; font-size: 12px; color: #0066cc;">
+          <strong>Note:</strong> Token values have been filtered to show only meaningful data. 
+          Non-ASCII characters, emojis, and extremely long values have been cleaned up for better performance.
+        </div>
+      `;
+      
+      // Group by token type
+      const tokensByType = {};
+      allTokens.forEach(token => {
+        if (!tokensByType[token.type]) {
+          tokensByType[token.type] = [];
+        }
+        tokensByType[token.type].push(token);
+      });
+      
+      Object.entries(tokensByType).forEach(([type, tokens]) => {
+        html += `
+          <div class="token-list">
+            <h4>${type} (${tokens.length})</h4>
+            ${tokens.map(token => `
+              <div class="token-item">
+                <div class="token-name">${token.name}</div>
+                <div style="color: #6c757d; font-size: 12px; margin-top: 4px;">
+                  ${token.node} (${token.nodeType})
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      });
+      
+      content.innerHTML = html;
+    }
+    
+    function countNodes(data) {
+      try {
+        let count = 0;
+        let nodeCount = 0;
+        const MAX_NODES = 10000; // Safety limit
+        
+        function countNode(node) {
+          nodeCount++;
+          if (nodeCount > MAX_NODES) {
+            console.warn('Reached maximum node limit in countNodes, stopping');
+            return;
+          }
+          
+          count++;
+          if (node.children && Array.isArray(node.children)) {
+            node.children.forEach(countNode);
+          }
+        }
+        
+        if (Array.isArray(data)) {
+          data.forEach(countNode);
+        }
+        
+        return count;
+      } catch (error) {
+        console.error('Error counting nodes:', error);
+        return 0;
+      }
+    }
+    
+    function countNodesWithTokens(data) {
+      try {
+        let count = 0;
+        let nodeCount = 0;
+        const MAX_NODES = 10000; // Safety limit
+        
+        function countNode(node) {
+          nodeCount++;
+          if (nodeCount > MAX_NODES) {
+            console.warn('Reached maximum node limit in countNodesWithTokens, stopping');
+            return;
+          }
+          
+          if (node.tokens && Object.keys(node.tokens).some(key => key.includes('tokenStudio'))) {
+            count++;
+          }
+          if (node.children && Array.isArray(node.children)) {
+            node.children.forEach(countNode);
+          }
+        }
+        
+        if (Array.isArray(data)) {
+          data.forEach(countNode);
+        }
+        
+        return count;
+      } catch (error) {
+        console.error('Error counting nodes with tokens:', error);
+        return 0;
+      }
+    }
+    
+    function isNodeAutoSized(node) {
+      // Text nodes are typically auto-sized
+      if (node.type === 'TEXT') {
+        return true;
+      }
+      
+      // Vector shapes (SVG paths) are auto-sized based on their geometry
+      if (node.type === 'VECTOR') {
+        return true;
+      }
+      
+      // Check if frame/component uses auto-layout with hug contents
+      if (node.styles.layoutMode === 'HORIZONTAL' || node.styles.layoutMode === 'VERTICAL') {
+        // If primary axis is set to hug contents, width/height are auto-calculated
+        if (node.styles.primaryAxisSizingMode === 'AUTO' || node.styles.counterAxisSizingMode === 'AUTO') {
+          return true;
+        }
+      }
+      
+      // Check if node is set to hug contents (no explicit layout mode)
+      // This is a heuristic - if a frame has children and no explicit sizing, it's likely auto-sized
+      if (node.children && node.children.length > 0) {
+        // If the frame has children but no explicit layout mode, it's likely hugging content
+        if (!node.styles.layoutMode) {
+          return true;
+        }
+      }
+      
+      // Additional checks for common auto-sized patterns
+      // If a frame has a specific name pattern that suggests it's a wrapper
+      if (node.name && (
+        node.name.toLowerCase().includes('wrapper') ||
+        node.name.toLowerCase().includes('container') ||
+        node.name.toLowerCase().includes('label') ||
+        node.name.toLowerCase().includes('placeholder')
+      )) {
+        // And it has children, it's likely auto-sized
+        if (node.children && node.children.length > 0) {
+          return true;
+        }
+      }
+      
+      // State variants (focused, hover, etc.) are typically NOT auto-sized
+      // They often have explicit dimensions for positioning
+      if (node.name && (
+        node.name.toLowerCase().includes('focused') ||
+        node.name.toLowerCase().includes('hover') ||
+        node.name.toLowerCase().includes('active') ||
+        node.name.toLowerCase().includes('pressed') ||
+        node.name.toLowerCase().includes('disabled')
+      )) {
+        return false;
+      }
+      
+      // Instances can be either auto-sized or explicitly sized
+      // We'll let the dimension checking logic handle this based on layout properties
+      if (node.type === 'INSTANCE') {
+        // If instance has explicit layout properties, it's not auto-sized
+        if (node.styles.layoutAlign === 'ABSOLUTE' || 
+            node.styles.layoutGrow === 0 ||
+            (node.styles.width !== undefined && node.styles.height !== undefined)) {
+          return false;
+        }
+        // Otherwise, instances are often auto-sized
+        return true;
+      }
+      
+      return false;
+    }
+    
+    function checkParentHasStrokeTokens(node, path) {
+      // Check if any parent in the hierarchy has stroke tokens
+      if (!currentData) return false;
+      
+      // Parse the path to find parent nodes
+      const pathParts = path.split(' > ');
+      if (pathParts.length <= 1) return false;
+      
+      // Remove the current node from the path
+      const parentPath = pathParts.slice(0, -1).join(' > ');
+      
+      // Find the parent node in the data
+      function findNodeByPath(data, targetPath) {
+        for (const rootNode of data) {
+          const found = findNodeRecursive(rootNode, targetPath);
+          if (found) return found;
+        }
+        return null;
+      }
+      
+      function findNodeRecursive(node, targetPath, currentPath = '') {
+        const nodePath = currentPath ? `${currentPath} > ${node.name}` : node.name;
+        
+        if (nodePath === targetPath) {
+          return node;
+        }
+        
+        if (node.children) {
+          for (const child of node.children) {
+            const found = findNodeRecursive(child, targetPath, nodePath);
+            if (found) return found;
+          }
+        }
+        
+        return null;
+      }
+      
+      const parentNode = findNodeByPath(currentData, parentPath);
+      if (!parentNode) return false;
+      
+      // Check if parent has stroke-related tokens
+      return parentNode.tokens && Object.keys(parentNode.tokens).some(key => 
+        key.includes('tokenStudio') && 
+        (key.includes('border') || key.includes('stroke') || key.includes('width'))
+      );
+    }
+    
+    function performLinting() {
+      if (!currentData) return;
+      
+      const issues = [];
+      
+      function checkNode(node, path = '') {
+        const currentPath = path ? `${path} > ${cleanNodeName(node.name)}` : cleanNodeName(node.name);
+        
+        if (node.styles) {
+          const styleIssues = [];
+          
+          // Check fills (background colors)
+          if (node.styles.fills && node.styles.fills.length > 0) {
+            const hasFillToken = node.tokens && (
+              node.tokens.tokenStudio_fill || 
+              node.tokens.tokenStudio_fills ||
+              node.tokens.fills || // Figma variables
+              // Check for any token that might be related to fill/background
+              Object.keys(node.tokens).some(key => 
+                key.includes('tokenStudio') && 
+                (key.includes('fill') || key.includes('background') || key.includes('color'))
+              )
+            );
+            if (!hasFillToken) {
+              styleIssues.push({
+                property: 'fills',
+                description: 'Background color(s)',
+                value: node.styles.fills.length + ' fill(s)'
+              });
+            }
+          }
+          
+          // Check strokes (borders)
+          if (node.styles.strokes && node.styles.strokes.length > 0) {
+            const hasStrokeToken = node.tokens && (
+              node.tokens.tokenStudio_stroke || 
+              node.tokens.tokenStudio_strokes ||
+              node.tokens.tokenStudio_border ||
+              node.tokens.tokenStudio_borderColor ||
+              node.tokens.strokes || // Figma variables
+              // Check for any token that might be related to stroke/border
+              Object.keys(node.tokens).some(key => 
+                key.includes('tokenStudio') && 
+                (key.includes('stroke') || key.includes('border'))
+              )
+            );
+            if (!hasStrokeToken) {
+              styleIssues.push({
+                property: 'strokes',
+                description: 'Border(s)',
+                value: node.styles.strokes.length + ' stroke(s)'
+              });
+            }
+          }
+          
+          // Check stroke weight (skip for text nodes and auto-sized frames)
+          if (node.styles.strokeWeight !== undefined && node.styles.strokeWeight !== 0 && node.type !== 'TEXT') {
+            const hasStrokeWeightToken = node.tokens && (
+              node.tokens.tokenStudio_strokeWeight ||
+              node.tokens.tokenStudio_borderWidth ||
+              node.tokens.tokenStudio_border ||
+              node.tokens.tokenStudio_borderWidth ||
+              // Check for any token that might be related to stroke/border
+              Object.keys(node.tokens).some(key => 
+                key.includes('tokenStudio') && 
+                (key.includes('border') || key.includes('stroke') || key.includes('width'))
+              )
+            );
+            
+            // Skip stroke weight for auto-sized frames as it's often inherited or auto-calculated
+            const isAutoSized = isNodeAutoSized(node);
+            
+            // Check if parent has stroke tokens (inheritance)
+            const parentHasStrokeTokens = checkParentHasStrokeTokens(node, path);
+            
+            // Check if this is an instance that might inherit stroke properties
+            const isInstance = node.type === 'INSTANCE';
+            
+            // Check if strokes are actually visible (not just inherited properties)
+            const hasVisibleStrokes = node.styles.strokes && node.styles.strokes.length > 0;
+            
+            // Check user options
+            const ignoreFocusStates = document.getElementById('ignore-focus-states')?.checked ?? true;
+            const ignoreInstances = document.getElementById('ignore-instances')?.checked ?? true;
+            const ignoreAutoSized = document.getElementById('ignore-auto-sized')?.checked ?? true;
+            
+            // Skip focus states if user chose to ignore them
+            if (ignoreFocusStates && node.name.toLowerCase().includes('focused')) {
+              console.log(`Skipping focus state ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Skip instances if user chose to ignore them
+            if (ignoreInstances && isInstance) {
+              console.log(`Skipping instance ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Skip auto-sized elements if user chose to ignore them
+            if (ignoreAutoSized && isAutoSized) {
+              console.log(`Skipping auto-sized element ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Debug logging
+            console.log(`Linting ${currentPath}:`, {
+              strokeWeight: node.styles.strokeWeight,
+              hasToken: !!hasStrokeWeightToken,
+              isAutoSized: isAutoSized,
+              parentHasStrokeTokens: parentHasStrokeTokens,
+              isInstance: isInstance,
+              hasVisibleStrokes: hasVisibleStrokes,
+              ignoreFocusStates: ignoreFocusStates,
+              ignoreInstances: ignoreInstances,
+              ignoreAutoSized: ignoreAutoSized,
+              nodeType: node.type,
+              nodeName: node.name,
+              layoutMode: node.styles.layoutMode,
+              primaryAxisSizing: node.styles.primaryAxisSizingMode,
+              counterAxisSizing: node.styles.counterAxisSizingMode,
+              availableTokens: node.tokens ? Object.keys(node.tokens).filter(k => k.includes('tokenStudio')) : []
+            });
+            
+            // Only flag stroke weight if:
+            // 1. No token assigned
+            // 2. Not auto-sized (or user wants to check auto-sized)
+            // 3. Parent doesn't have stroke tokens (inheritance)
+            // 4. Either has visible strokes OR is not an instance (instances often inherit properties)
+            // 5. User hasn't chosen to ignore this type of element
+            if (!hasStrokeWeightToken && (!ignoreAutoSized || !isAutoSized) && !parentHasStrokeTokens && (hasVisibleStrokes || !isInstance)) {
+              styleIssues.push({
+                property: 'strokeWeight',
+                description: 'Border width',
+                value: node.styles.strokeWeight + 'px'
+              });
+            }
+          }
+          
+          // Check effects (shadows, etc.)
+          if (node.styles.effects && node.styles.effects.length > 0) {
+            const hasEffectToken = node.tokens && (
+              node.tokens.tokenStudio_effect ||
+              node.tokens.tokenStudio_effects ||
+              node.tokens.effectStyleId
+            );
+            if (!hasEffectToken) {
+              styleIssues.push({
+                property: 'effects',
+                description: 'Effect(s)',
+                value: node.styles.effects.length + ' effect(s)'
+              });
+            }
+          }
+          
+          // Check text-specific styles
+          if (node.type === 'TEXT') {
+            // Font size
+            if (node.styles.fontSize !== undefined) {
+              const hasFontSizeToken = node.tokens && (
+                node.tokens.tokenStudio_fontSize ||
+                node.tokens.tokenStudio_typography ||
+                node.tokens.tokenStudio_textStyle
+              );
+              if (!hasFontSizeToken) {
+                styleIssues.push({
+                  property: 'fontSize',
+                  description: 'Font size',
+                  value: node.styles.fontSize + 'px'
+                });
+              }
+            }
+            
+            // Font family
+            if (node.styles.fontName) {
+              const hasFontFamilyToken = node.tokens && (
+                node.tokens.tokenStudio_fontFamily ||
+                node.tokens.tokenStudio_typography ||
+                node.tokens.tokenStudio_textStyle
+              );
+              if (!hasFontFamilyToken) {
+                styleIssues.push({
+                  property: 'fontName',
+                  description: 'Font family',
+                  value: node.styles.fontName.family
+                });
+              }
+            }
+            
+            // Letter spacing (only if explicitly set, not default)
+            if (node.styles.letterSpacing !== undefined && 
+                node.styles.letterSpacing.value !== 0) {
+              const hasLetterSpacingToken = node.tokens && (
+                node.tokens.tokenStudio_letterSpacing ||
+                node.tokens.tokenStudio_typography ||
+                node.tokens.tokenStudio_textStyle
+              );
+              if (!hasLetterSpacingToken) {
+                styleIssues.push({
+                  property: 'letterSpacing',
+                  description: 'Letter spacing',
+                  value: node.styles.letterSpacing.value + (node.styles.letterSpacing.unit === 'PIXELS' ? 'px' : '%')
+                });
+              }
+            }
+            
+            // Line height (only if explicitly set, not auto)
+            if (node.styles.lineHeight !== undefined && 
+                node.styles.lineHeight.value !== 0 && 
+                node.styles.lineHeight.unit !== 'AUTO') {
+              const hasLineHeightToken = node.tokens && (
+                node.tokens.tokenStudio_lineHeight ||
+                node.tokens.tokenStudio_typography ||
+                node.tokens.tokenStudio_textStyle
+              );
+              if (!hasLineHeightToken) {
+                styleIssues.push({
+                  property: 'lineHeight',
+                  description: 'Line height',
+                  value: node.styles.lineHeight.value + (node.styles.lineHeight.unit === 'PIXELS' ? 'px' : '%')
+                });
+              }
+            }
+          }
+          
+          // Check spacing/dimensions for all nodes
+          if (node.styles.width !== undefined || node.styles.height !== undefined) {
+            const hasDimensionToken = node.tokens && (
+              node.tokens.tokenStudio_width ||
+              node.tokens.tokenStudio_height ||
+              node.tokens.tokenStudio_dimension ||
+              node.tokens.tokenStudio_sizing ||
+              // Check for any token that might be related to dimensions
+              Object.keys(node.tokens).some(key => 
+                key.includes('tokenStudio') && 
+                (key.includes('width') || key.includes('height') || key.includes('dimension') || key.includes('sizing'))
+              )
+            );
+            
+            // Check if dimensions are auto-sized (should not be tokenized)
+            const isAutoSized = isNodeAutoSized(node);
+            
+            // Check if this is an absolutely positioned element (should be tokenized)
+            const isAbsolutelyPositioned = node.styles.layoutAlign === 'ABSOLUTE' || 
+                                         node.styles.layoutGrow === 0 || 
+                                         node.name.toLowerCase().includes('focused') ||
+                                         node.name.toLowerCase().includes('absolute');
+            
+            // Check if this is a state variant (focused, hover, etc.) - these should be tokenized
+            const isStateVariant = node.name.toLowerCase().includes('focused') ||
+                                 node.name.toLowerCase().includes('hover') ||
+                                 node.name.toLowerCase().includes('active') ||
+                                 node.name.toLowerCase().includes('pressed') ||
+                                 node.name.toLowerCase().includes('disabled');
+            
+            // Check user options
+            const ignoreFocusStates = document.getElementById('ignore-focus-states')?.checked ?? true;
+            const ignoreInstances = document.getElementById('ignore-instances')?.checked ?? true;
+            const ignoreAutoSized = document.getElementById('ignore-auto-sized')?.checked ?? true;
+            
+            // Skip focus states if user chose to ignore them
+            if (ignoreFocusStates && node.name.toLowerCase().includes('focused')) {
+              console.log(`Skipping focus state ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Skip instances if user chose to ignore them
+            if (ignoreInstances && node.type === 'INSTANCE') {
+              console.log(`Skipping instance ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Skip auto-sized elements if user chose to ignore them
+            if (ignoreAutoSized && isAutoSized) {
+              console.log(`Skipping auto-sized element ${currentPath} due to user preference`);
+              return;
+            }
+            
+            // Debug logging for dimensions
+            console.log(`Linting dimensions for ${currentPath}:`, {
+              width: node.styles.width,
+              height: node.styles.height,
+              hasToken: !!hasDimensionToken,
+              isAutoSized: isAutoSized,
+              isAbsolutelyPositioned: isAbsolutelyPositioned,
+              isStateVariant: isStateVariant,
+              ignoreFocusStates: ignoreFocusStates,
+              ignoreInstances: ignoreInstances,
+              ignoreAutoSized: ignoreAutoSized,
+              nodeType: node.type,
+              nodeName: node.name,
+              layoutAlign: node.styles.layoutAlign,
+              layoutGrow: node.styles.layoutGrow,
+              availableTokens: node.tokens ? Object.keys(node.tokens).filter(k => k.includes('tokenStudio')) : []
+            });
+            
+            // Only flag dimensions if:
+            // 1. No token assigned
+            // 2. Not auto-sized (or user wants to check auto-sized)
+            // 3. Either absolutely positioned OR state variant (these should be tokenized)
+            // 4. User hasn't chosen to ignore this type of element
+            if (!hasDimensionToken && (!ignoreAutoSized || !isAutoSized) && (isAbsolutelyPositioned || isStateVariant)) {
+              if (node.styles.width !== undefined) {
+                styleIssues.push({
+                  property: 'width',
+                  description: 'Width',
+                  value: node.styles.width + 'px'
+                });
+              }
+              if (node.styles.height !== undefined) {
+                styleIssues.push({
+                  property: 'height',
+                  description: 'Height',
+                  value: node.styles.height + 'px'
+                });
+              }
+            }
+          }
+          
+          // Add issues if any found
+          if (styleIssues.length > 0) {
+            issues.push({
+              path: currentPath,
+              type: node.type,
+              issues: styleIssues
+            });
+          }
+        }
+        
+        // Check children
+        if (node.children) {
+          node.children.forEach(child => checkNode(child, currentPath));
+        }
+      }
+      
+      currentData.forEach(node => checkNode(node));
+      
+      lintingResults = issues;
+      updateLintingDisplay();
+    }
+    
+    function updateLintingDisplay() {
+      const content = document.getElementById('linting-content');
+      
+      // Get current checkbox states before recreating the HTML
+      const ignoreFocusStates = document.getElementById('ignore-focus-states')?.checked ?? true;
+      const ignoreInstances = document.getElementById('ignore-instances')?.checked ?? true;
+      const ignoreAutoSized = document.getElementById('ignore-auto-sized')?.checked ?? true;
+      
+      if (!lintingResults || lintingResults.length === 0) {
+        content.innerHTML = `
+          <h3>Linting Results</h3>
+          <div class="linting-options" style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 4px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Linting Options</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-focus-states" ${ignoreFocusStates ? 'checked' : ''}>
+                <span>Ignore focus state elements (accessibility overlays)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-instances" ${ignoreInstances ? 'checked' : ''}>
+                <span>Ignore instance inheritance issues</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-auto-sized" ${ignoreAutoSized ? 'checked' : ''}>
+                <span>Ignore auto-sized elements</span>
+              </label>
+            </div>
+            <button onclick="performLinting()" style="margin-top: 8px; padding: 6px 12px; font-size: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px;">
+              🔄 Refresh Linting
+            </button>
+          </div>
+          <div class="success">✅ No issues found! All layers with styles have token assignments.</div>
+        `;
+      } else {
+        let html = `
+          <h3>Linting Results</h3>
+          <div class="linting-options" style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 4px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Linting Options</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-focus-states" ${ignoreFocusStates ? 'checked' : ''}>
+                <span>Ignore focus state elements (accessibility overlays)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-instances" ${ignoreInstances ? 'checked' : ''}>
+                <span>Ignore instance inheritance issues</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-auto-sized" ${ignoreAutoSized ? 'checked' : ''}>
+                <span>Ignore auto-sized elements</span>
+              </label>
+            </div>
+            <button onclick="performLinting()" style="margin-top: 8px; padding: 6px 12px; font-size: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px;">
+              🔄 Refresh Linting
+            </button>
+          </div>
+          <div class="token-studio-warning">
+            Found ${lintingResults.length} layer(s) with hardcoded styles but no token assignments:
+          </div>
+        `;
+        
+        lintingResults.forEach(issue => {
+          // Check if this is a state variant
+          const isStateVariant = issue.path.toLowerCase().includes('focused') ||
+                               issue.path.toLowerCase().includes('hover') ||
+                               issue.path.toLowerCase().includes('active') ||
+                               issue.path.toLowerCase().includes('pressed') ||
+                               issue.path.toLowerCase().includes('disabled');
+          
+          const stateVariantNote = isStateVariant ? 
+            '<div style="margin: 4px 0; padding: 4px 8px; background: rgba(255, 193, 7, 0.1); border-radius: 3px; font-size: 12px; color: #856404;">' +
+            '💡 <strong>State variant detected:</strong> This element should use tokens for proper scaling across different states.' +
+            '</div>' : '';
+          
+          html += `
+            <div class="lint-issue">
+              <strong>${issue.path}</strong> (${issue.type})<br>
+              ${stateVariantNote}
+              <div style="margin-top: 8px;">
+                ${issue.issues.map(styleIssue => 
+                  `<div style="margin: 4px 0; padding: 4px 8px; background: rgba(220, 53, 69, 0.1); border-radius: 3px; font-size: 12px;">
+                    <strong>${styleIssue.description}:</strong> ${styleIssue.value}
+                  </div>`
+                ).join('')}
+              </div>
+            </div>
+          `;
+        });
+        
+        // Add debug info for troubleshooting
+        html += `
+          <div style="margin-top: 2em; padding: 1em; background: #f8f9fa; border-radius: 4px; font-size: 12px;">
+            <strong>Debug Info:</strong> 
+            <ul style="margin: 8px 0; padding-left: 20px;">
+              <li>If you're seeing false positives, the node might be auto-sized. Check the console for detailed linting decisions.</li>
+              <li><strong>State variants</strong> (focused, hover, etc.) with explicit dimensions should be tokenized to allow proper scaling.</li>
+              <li><strong>Absolutely positioned elements</strong> with hardcoded dimensions should use tokens for responsive behavior.</li>
+              <li><strong>Instances</strong> often inherit properties from their parent components.</li>
+            </ul>
+          </div>
+        `;
+        
+        content.innerHTML = html;
+      }
+    }
+    
+    function copyToClipboard() {
+      if (!currentData) {
+        alert('No data to copy');
+        return;
+      }
+      
+      const jsonString = JSON.stringify(currentData, null, 2);
+      navigator.clipboard.writeText(jsonString).then(() => {
+        alert('JSON copied to clipboard!');
+      }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = jsonString;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('JSON copied to clipboard!');
+      });
+    }
+    
+    function downloadJSON() {
+      if (!currentData) {
+        alert('No data to download');
+        return;
+      }
+      
+      const jsonString = JSON.stringify(currentData, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tokenflow-tokens.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    
+    function sendToAPI() {
+      alert('Local API bridge coming soon! This will allow Tokenflow and MCP tools to access the token data.');
+    }
+    
+    function updateStructureDisplay() {
+      try {
+        const content = document.getElementById('structure-content');
+        if (!currentData) return;
+        
+        // Add safety check for data size
+        if (currentData.length > 1000) {
+          content.innerHTML = `
+            <div style="padding: 20px; background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%); border: 1px solid #f6ad55; border-radius: 12px; color: #c05621; margin: 16px 0; font-weight: 500;">
+              <strong>Large Selection:</strong> The selected data is very large (${currentData.length} root nodes). 
+              Processing may take a moment...
+            </div>
+          `;
+          setTimeout(() => {
+            try {
+              updateStructureDisplayInternal();
+            } catch (error) {
+              console.error('Error in delayed structure update:', error);
+              content.innerHTML = `
+                <div style="padding: 20px; background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); border: 1px solid #fc8181; border-radius: 12px; color: #c53030; margin: 16px 0; font-weight: 500;">
+                  <strong>Error:</strong> Failed to process large selection: ${error.message}
+                </div>
+              `;
+            }
+          }, 100);
+          return;
+        }
+        
+        updateStructureDisplayInternal();
+        
+      } catch (error) {
+        console.error('Error updating structure display:', error);
+        const content = document.getElementById('structure-content');
+        if (content) {
+          content.innerHTML = `
+            <div style="padding: 20px; background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); border: 1px solid #fc8181; border-radius: 12px; color: #c53030; margin: 16px 0; font-weight: 500;">
+              <strong>Error:</strong> Failed to update structure: ${error.message}
+            </div>
+          `;
+        }
+      }
+    }
+    
+    function updateStructureDisplayInternal() {
+      const content = document.getElementById('structure-content');
+      if (!currentData) return;
+      
+      let html = '<h3>Node Structure</h3>';
+      let nodeCount = 0;
+      const MAX_NODES = 5000; // Lower limit for structure display
+      
+      function renderNode(node, level = 0) {
+        nodeCount++;
+        if (nodeCount > MAX_NODES) {
+          html += `<div style="margin-left: ${level * 24}px; color: #718096; font-style: italic; padding: 8px;">... (truncated at ${MAX_NODES} nodes)</div>`;
+          return;
+        }
+        
+        const hasTokens = node.tokens && Object.keys(node.tokens).some(key => key.includes('tokenStudio'));
+        const tokenCount = hasTokens ? Object.keys(node.tokens).filter(key => key.includes('tokenStudio')).length : 0;
+        
+        html += `
+          <div class="node-item" style="margin-left: ${level * 24}px;">
+            <div class="node-info">
+              <span class="node-name">${cleanNodeName(node.name)}</span>
+              <span class="node-type">${node.type}</span>
+            </div>
+            ${hasTokens ? `<span class="token-count">${tokenCount} tokens</span>` : ''}
+          </div>
+        `;
+        
+        if (node.children && Array.isArray(node.children)) {
+          node.children.forEach(child => renderNode(child, level + 1));
+        }
+      }
+      
+      if (Array.isArray(currentData)) {
+        currentData.forEach(node => renderNode(node));
+      }
+      
+      html += `
+        <button class="raw-data-toggle" onclick="toggleRawData()">Show Raw JSON Data</button>
+        <div id="raw-data" class="raw-data">
+          <pre>${JSON.stringify(currentData, null, 2)}</pre>
+        </div>
+      `;
+      
+      content.innerHTML = html;
+    }
+    
+    function toggleRawData() {
+      const rawData = document.getElementById('raw-data');
+      const button = document.querySelector('.raw-data-toggle');
+      
+      if (rawData.style.display === 'none' || !rawData.style.display) {
+        rawData.style.display = 'block';
+        button.textContent = 'Hide Raw JSON Data';
+      } else {
+        rawData.style.display = 'none';
+        button.textContent = 'Show Raw JSON Data';
+      }
+    }
+    
+    function refreshSelection() {
+      // Reset data and show loading state
+      currentData = null;
+      lintingResults = null;
+      
+      // Show loading message on all tabs
+      const overviewContent = document.getElementById('overview-content');
+      const tokensContent = document.getElementById('tokens-content');
+      const structureContent = document.getElementById('structure-content');
+      const lintingContent = document.getElementById('linting-content');
+      const exportContent = document.getElementById('export-content');
+      
+      const loadingMessage = `
+        <div style="text-align: center; padding: 40px 20px; color: #6c757d;">
+          <div style="font-size: 24px; margin-bottom: 8px;">🔄</div>
+          <div style="font-size: 14px; font-weight: 500;">Refreshing selection data...</div>
+          <div style="font-size: 12px; margin-top: 4px;">Please wait while we scan the current selection</div>
+        </div>
+      `;
+      
+      if (overviewContent) overviewContent.innerHTML = loadingMessage;
+      if (tokensContent) tokensContent.innerHTML = loadingMessage;
+      if (structureContent) structureContent.innerHTML = loadingMessage;
+      if (exportContent) exportContent.innerHTML = loadingMessage;
+      
+      // For linting tab, preserve the options structure
+      if (lintingContent) {
+        lintingContent.innerHTML = `
+          <h3>Linting Results</h3>
+          <div class="linting-options" style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 4px;">
+            <h4 style="margin: 0 0 8px 0; font-size: 14px;">Linting Options</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-focus-states" checked>
+                <span>Ignore focus state elements (accessibility overlays)</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-instances" checked>
+                <span>Ignore instance inheritance issues</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ignore-auto-sized" checked>
+                <span>Ignore auto-sized elements</span>
+              </label>
+            </div>
+            <button onclick="performLinting()" style="margin-top: 8px; padding: 6px 12px; font-size: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px;">
+              🔄 Refresh Linting
+            </button>
+          </div>
+          ${loadingMessage}
+        `;
+      }
+      
+      // Request new data from the plugin
+      parent.postMessage({ pluginMessage: { type: 'refresh-selection' } }, '*');
+    }
+    
+    window.onmessage = (event) => {
+      try {
+        const { type, data, hasTokenStudioData, message } = event.data.pluginMessage;
+        
+        if (type === 'no-selection') {
+          document.getElementById('overview-content').innerHTML = '<div class="no-selection">No selection. Please select a layer.</div>';
+          // Also update linting tab if it's active
+          const lintingContent = document.getElementById('linting-content');
+          if (lintingContent) {
+            lintingContent.innerHTML = `
+              <h3>Linting Results</h3>
+              <div class="linting-options" style="margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 4px;">
+                <h4 style="margin: 0 0 8px 0; font-size: 14px;">Linting Options</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <input type="checkbox" id="ignore-focus-states" checked>
+                    <span>Ignore focus state elements (accessibility overlays)</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <input type="checkbox" id="ignore-instances" checked>
+                    <span>Ignore instance inheritance issues</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <input type="checkbox" id="ignore-auto-sized" checked>
+                    <span>Ignore auto-sized elements</span>
+                  </label>
+                </div>
+                <button onclick="performLinting()" style="margin-top: 8px; padding: 6px 12px; font-size: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; gap: 6px;">
+                  🔄 Refresh Linting
+                </button>
+              </div>
+              <div class="no-selection">No selection. Please select a layer.</div>
+            `;
+          }
+        } else if (type === 'selection-data') {
+          // Validate data before processing
+          if (!validateData(data)) {
+            console.error('Invalid data received from plugin');
+            const errorMessage = `
+              <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+                <strong>Error:</strong> Invalid data received from plugin. Please try refreshing the selection.
+              </div>
+            `;
+            
+            // Show error on all tabs
+            const overviewContent = document.getElementById('overview-content');
+            const tokensContent = document.getElementById('tokens-content');
+            const structureContent = document.getElementById('structure-content');
+            const lintingContent = document.getElementById('linting-content');
+            const exportContent = document.getElementById('export-content');
+            
+            if (overviewContent) overviewContent.innerHTML = errorMessage;
+            if (tokensContent) tokensContent.innerHTML = errorMessage;
+            if (structureContent) structureContent.innerHTML = errorMessage;
+            if (lintingContent) lintingContent.innerHTML = `<h3>Linting Results</h3>${errorMessage}`;
+            if (exportContent) exportContent.innerHTML = errorMessage;
+            return;
+          }
+          
+          currentData = data;
+          lintingResults = null; // Reset linting results for new data
+          
+          // Initialize with overview tab
+          updateOverviewDisplay();
+        } else if (type === 'error') {
+          // Handle error messages
+          const errorMessage = `
+            <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+              <strong>Error:</strong> ${message || 'An unknown error occurred'}
+            </div>
+          `;
+          
+          // Show error on all tabs
+          const overviewContent = document.getElementById('overview-content');
+          const tokensContent = document.getElementById('tokens-content');
+          const structureContent = document.getElementById('structure-content');
+          const lintingContent = document.getElementById('linting-content');
+          const exportContent = document.getElementById('export-content');
+          
+          if (overviewContent) overviewContent.innerHTML = errorMessage;
+          if (tokensContent) tokensContent.innerHTML = errorMessage;
+          if (structureContent) structureContent.innerHTML = errorMessage;
+          if (lintingContent) lintingContent.innerHTML = `<h3>Linting Results</h3>${errorMessage}`;
+          if (exportContent) exportContent.innerHTML = errorMessage;
+        }
+      } catch (error) {
+        console.error('Error handling plugin message:', error);
+        // Show error on overview tab
+        const overviewContent = document.getElementById('overview-content');
+        if (overviewContent) {
+          overviewContent.innerHTML = `
+            <div style="padding: 16px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin: 16px 0;">
+              <strong>Error:</strong> Failed to process plugin message: ${error.message}
+            </div>
+          `;
+        }
+      }
+    };
+  </script>
+</body>
+</html> 
