@@ -1,0 +1,24 @@
+🚀 Tokenflow Bridge Server running on http://localhost:4000
+📡 WebSocket server ready on ws://localhost:4000
+📊 Health check: http://localhost:4000/health
+🔌 API endpoint: http://localhost:4000/api/tokens
+🔌 WebSocket client connected
+🔌 WebSocket client disconnected
+🔌 WebSocket client connected
+🔌 WebSocket client disconnected
+🔌 WebSocket client connected
+🔌 WebSocket client disconnected
+🔌 WebSocket client connected
+🔌 WebSocket client disconnected
+🔌 WebSocket client connected
+🔌 WebSocket client disconnected
+🔌 WebSocket client connected
+📦 Received token data: {
+  projectId: 'default',
+  rawTokenCount: 11,
+  cleanTokenCount: 0,
+  selection: 'none',
+  timestamp: '2025-07-19T18:03:56.250Z'
+}
+🛑 Shutting down gracefully...
+✅ Server closed

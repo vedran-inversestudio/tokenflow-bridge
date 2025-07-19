@@ -1,0 +1,26 @@
+{
+  "raw": {
+    "borderRadius": "pillow.border-radius.container.pill",
+    "height": "pillow.dimension.action.height.1_5x",
+    "border": "pillow.border.action.transparent",
+    "horizontalPadding": "pillow.spacing.container.0_75x",
+    "itemSpacing": "pillow.spacing.container.0_25x",
+    "fill": "pillow.color.text-and-icon.success",
+    "sizing": "pillow.dimension.icon.0_5x",
+    "dimension": "pillow.dimension.icon.0_5x",
+    "borderWidth": "pillow.border-width.icon-stroke.s",
+    "borderColor": "pillow.color.text-and-icon.success",
+    "typography": "pillow.typography.interactive.strong.small"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T18:03:56.250Z"
+}

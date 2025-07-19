@@ -1,0 +1,38 @@
+{
+  "raw": {
+    "itemSpacing": "pillow.spacing.container.0_25x",
+    "width": "pillow.dimension.input.width.1x",
+    "height": "pillow.dimension.input.height.1x",
+    "fill": "pillow.color.text-and-icon.muted",
+    "borderRadius": "pillow.border-radius.container.0_25x",
+    "border": "pillow.border.action.focused",
+    "sizing": "pillow.dimension.icon.0_5x",
+    "dimension": "pillow.dimension.icon.0_5x",
+    "borderColor": "pillow.color.text-and-icon.selected",
+    "borderWidth": "pillow.border-width.icon-stroke.s",
+    "typography": "pillow.typography.body.medium"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {
+      "itemSpacing": "pillow.spacing.container.0_25x",
+      "width": "pillow.dimension.input.width.1x",
+      "height": "pillow.dimension.input.height.1x",
+      "fill": "pillow.color.text-and-icon.muted",
+      "borderRadius": "pillow.border-radius.container.0_25x",
+      "border": "pillow.border.action.focused",
+      "sizing": "pillow.dimension.icon.0_5x",
+      "dimension": "pillow.dimension.icon.0_5x",
+      "borderColor": "pillow.color.text-and-icon.selected",
+      "borderWidth": "pillow.border-width.icon-stroke.s",
+      "typography": "pillow.typography.body.medium"
+    }
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T18:35:39.299Z"
+}

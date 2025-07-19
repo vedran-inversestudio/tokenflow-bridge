@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Local bridge server for Tokenflow Bridge Figma plugin",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "mcp": "cd ../mcp-server && npm start",
     "test": "jest",
     "test-connection": "node test-connection.js",
-    "send-tokens": "node send-tokens.js"
+    "send-tokens": "node send-tokens.js",
+    "diagnose": "node diagnose-filtering.js"
   },
   "keywords": [
     "figma",

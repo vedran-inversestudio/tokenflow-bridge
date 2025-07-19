@@ -1,0 +1,38 @@
+{
+  "raw": {
+    "borderRadius": "pillow.border-radius.container.pill",
+    "height": "pillow.dimension.action.height.2_25x",
+    "verticalPadding": "pillow.spacing.container.none",
+    "border": "pillow.border.action.focused",
+    "horizontalPadding": "pillow.spacing.container.none",
+    "itemSpacing": "pillow.spacing.container.0_25x",
+    "fill": "pillow.color.text-and-icon.primary-inverted",
+    "sizing": "pillow.dimension.icon.1x",
+    "borderColor": "pillow.color.text-and-icon.primary-inverted",
+    "borderWidth": "pillow.border-width.icon-stroke.l",
+    "typography": "pillow.typography.interactive.strong.large"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {
+      "borderRadius": "pillow.border-radius.container.pill",
+      "height": "pillow.dimension.action.height.2_25x",
+      "verticalPadding": "pillow.spacing.container.none",
+      "border": "pillow.border.action.focused",
+      "horizontalPadding": "pillow.spacing.container.none",
+      "itemSpacing": "pillow.spacing.container.0_25x",
+      "fill": "pillow.color.text-and-icon.primary-inverted",
+      "sizing": "pillow.dimension.icon.1x",
+      "borderColor": "pillow.color.text-and-icon.primary-inverted",
+      "borderWidth": "pillow.border-width.icon-stroke.l",
+      "typography": "pillow.typography.interactive.strong.large"
+    }
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T18:28:50.406Z"
+}

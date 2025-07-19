@@ -1,0 +1,45 @@
+{
+  "raw": {
+    "tokenStudio": {
+      "button_primary_color": "#667eea",
+      "button_primary_radius": "8px"
+    },
+    "variables": {
+      "spacing_small": "8px",
+      "spacing_medium": "16px"
+    },
+    "styles": {
+      "text_heading": "Inter, 24px, Bold"
+    },
+    "rawData": [
+      {
+        "name": "Test Button",
+        "type": "RECTANGLE",
+        "id": "test-123",
+        "tokens": {
+          "tokenStudio_primary_color": "#667eea"
+        }
+      }
+    ]
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": [
+    {
+      "name": "Test Button",
+      "type": "RECTANGLE",
+      "id": "test-123"
+    }
+  ],
+  "metadata": {
+    "extractedAt": "2025-07-19T05:02:29.968Z",
+    "source": "test-script",
+    "version": "1.0.0",
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T05:02:29.970Z"
+}

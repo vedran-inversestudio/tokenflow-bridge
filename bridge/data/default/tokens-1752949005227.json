@@ -1,0 +1,28 @@
+{
+  "raw": {
+    "borderRadius": "pillow.border-radius.container.pill",
+    "height": "pillow.dimension.action.height.1_5x",
+    "verticalPadding": "pillow.spacing.container.none",
+    "border": "pillow.border.action.transparent",
+    "horizontalPadding": "pillow.spacing.container.none",
+    "itemSpacing": "pillow.spacing.container.0_12x",
+    "fill": "pillow.color.background.neutral.initial",
+    "sizing": "pillow.dimension.icon.0_5x",
+    "borderColor": "pillow.color.text-and-icon.disabled",
+    "borderWidth": "pillow.border-width.icon-stroke.s",
+    "typography": "pillow.typography.interactive.strong.small",
+    "width": "pillow.dimension.action.width.1_5x",
+    "dimension": "pillow.dimension.icon.0_5x"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T18:16:45.226Z"
+}

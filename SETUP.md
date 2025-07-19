@@ -250,6 +250,140 @@ Once the basic setup is working:
 4. **Create Storybook stories** for your generated components
 5. **Set up automated workflows** for continuous token updates
 
+## 🌐 Using MCP Server in Other Projects
+
+The Tokenflow Bridge MCP server can be used in any project to generate components from design tokens. Here are the different approaches:
+
+### Option 1: Global MCP Server (Recommended)
+
+Use the MCP server from the tokenflow-bridge project across all your projects:
+
+```bash
+# Start the global MCP server (from tokenflow-bridge directory)
+cd /path/to/tokenflow-bridge/mcp-server
+npm start
+
+# In any other project, just connect the Figma plugin to:
+Bridge URL: http://localhost:4000
+```
+
+**Advantages:**
+- ✅ Only one server to manage
+- ✅ Works across all projects
+- ✅ No additional installation needed
+- ✅ Consistent connection URL
+
+### Option 2: Project-Specific MCP Server
+
+Install the MCP server directly in your project:
+
+```bash
+# 1. Copy MCP server to your project
+cp -r /path/to/tokenflow-bridge/mcp-server ./mcp-server
+
+# 2. Install dependencies
+cd mcp-server
+npm install
+
+# 3. Add script to your project's package.json
+{
+  "scripts": {
+    "mcp": "cd mcp-server && npm start",
+    "storybook": "storybook dev -p 6006"
+  }
+}
+
+# 4. Start the MCP server
+npm run mcp
+```
+
+**When to use this option:**
+- Project-specific token workflows
+- Custom MCP tool modifications
+- Isolated development environments
+
+### Setup Steps for Any Project
+
+1. **Start the MCP server** (either global or project-specific):
+   ```bash
+   # Global (from tokenflow-bridge)
+   cd /path/to/tokenflow-bridge/mcp-server && npm start
+   
+   # OR Project-specific (from your project)
+   npm run mcp
+   ```
+
+2. **Start your development server**:
+   ```bash
+   npm run storybook  # or your preferred dev server
+   ```
+
+3. **Connect the Figma plugin** to `http://localhost:4000`
+
+4. **Use Cursor IDE** to generate components using MCP tools:
+   - `/getCurrentTokens` - Get latest tokens from Figma
+   - `/generateComponent button primary` - Generate React components
+   - `/getBridgeStatus` - Check system status
+
+### Cursor Configuration for Other Projects
+
+**For Global MCP Server:**
+Add to your Cursor settings (works for all projects):
+```json
+{
+  "mcpServers": {
+    "tokenflow": {
+      "command": "node",
+      "args": ["/full/path/to/tokenflow-bridge/mcp-server/server.js"]
+    }
+  }
+}
+```
+
+**For Project-Specific MCP Server:**
+Create `.cursorrules` in your project root:
+```json
+{
+  "mcpServers": {
+    "tokenflow": {
+      "command": "node",
+      "args": ["./mcp-server/server.js"]
+    }
+  }
+}
+```
+
+### Troubleshooting Multi-Project Setup
+
+**"npm run mcp" not found:**
+```bash
+# Make sure you're in the correct directory
+cd /path/to/your-project
+# Add the script to package.json as shown above
+```
+
+**Port 4000 already in use:**
+```bash
+# Check what's using the port
+lsof -i :4000
+# Kill existing process or use a different port
+```
+
+**MCP server not starting:**
+```bash
+# Check dependencies are installed
+cd mcp-server && npm install
+# Verify Node.js version (requires v18+)
+node --version
+```
+
+**Cursor not recognizing MCP tools:**
+```bash
+# Restart Cursor after configuration changes
+# Verify the path to server.js is correct
+# Check that Node.js is available in PATH
+```
+
 ## 🤝 Support
 
 - **Issues**: Open a GitHub issue

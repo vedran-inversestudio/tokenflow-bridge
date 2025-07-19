@@ -1,0 +1,17 @@
+{
+  "raw": {
+    "borderRadius": "pillow.border-radius.container.pill",
+    "height": "pillow.dimension.action.height.1_5x"
+  },
+  "filtered": {
+    "tokenStudio": {},
+    "variables": {},
+    "styles": {},
+    "cleanTokens": {}
+  },
+  "selection": null,
+  "metadata": {
+    "projectId": "default"
+  },
+  "extractedAt": "2025-07-19T18:21:14.313Z"
+}

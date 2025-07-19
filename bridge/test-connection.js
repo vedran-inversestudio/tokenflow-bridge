@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 async function testBridgeServer() {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'http://localhost:4000';
   
   console.log('🧪 Testing Tokenflow Bridge Server...\n');
   
@@ -74,7 +74,15 @@ async function testBridgeServer() {
     const getResponse = await fetch(`${baseUrl}/api/tokens`);
     const retrievedData = await getResponse.json();
     console.log('✅ Data retrieved successfully');
-    console.log('   Token count:', Object.keys(retrievedData.data.tokens.tokenStudio).length);
+    
+    if (retrievedData.data.filtered) {
+      const cleanTokenCount = Object.keys(retrievedData.data.filtered.cleanTokens || {}).length;
+      const tokenStudioCount = Object.keys(retrievedData.data.filtered.tokenStudio || {}).length;
+      console.log('   Clean tokens:', cleanTokenCount);
+      console.log('   Token Studio tokens:', tokenStudioCount);
+    } else {
+      console.log('   No filtered data available');
+    }
     
     // Test 4: Check history
     console.log('\n4. Testing history endpoint...');
@@ -84,7 +92,7 @@ async function testBridgeServer() {
     console.log('   History entries:', historyData.history.length);
     
     console.log('\n🎉 All tests passed! Bridge server is working correctly.');
-    console.log('\n📊 Dashboard available at: http://localhost:3000');
+    console.log('\n📊 Dashboard available at: http://localhost:4000');
     console.log('🔌 Ready to receive data from Figma plugin!');
     
   } catch (error) {

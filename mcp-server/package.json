@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node simple-server.js",
     "dev": "nodemon server.js",
     "test": "node test.js"
   },
@@ -20,7 +20,8 @@
   "author": "Tokenflow Bridge",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.16.0",
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "dotenv": "^17.2.0",
     "node-fetch": "^3.3.2",
     "ws": "^8.14.2"
   },
